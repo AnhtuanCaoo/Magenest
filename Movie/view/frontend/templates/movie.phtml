@@ -1,0 +1,20 @@
+<h2>Movie List</h2>
+<table>
+    <tr>
+        <th>Movie</th>
+        <th>Description</th>
+        <th>Rating</th>
+        
+    </tr>
+    <?php foreach ($block->getMovies() as $product): ?>
+    
+    <tr>
+        <td><?php echo $product->getName() ?></td>
+        <td><?php echo $product->getDescription() ?></td>
+        <td><?php echo $product->getRating() ?></td>
+    </tr>
+    
+
+    <?php endforeach; ?>
+</table>
+
