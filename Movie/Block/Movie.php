@@ -25,7 +25,7 @@ class Movie extends Template
         ->addFieldToSelect('name', 'movie')
         ->addFieldToSelect('description')
         ->addFieldToSelect('rating');
-        $collection->joinDirector();
+        $collection->joinTable();
         return $collection;
         }
     

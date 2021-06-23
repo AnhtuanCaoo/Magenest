@@ -11,7 +11,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         $this->_init('Magenest\Movie\Model\Movie', 'Magenest\Movie\Model\ResourceModel\Movie');
     }
-    public function joinDirector(){
+    public function joinTable(){
         $actorTable = $this->getTable('magenest_actor');
         $actormovieTable = $this->getTable('magenest_movie_actor');
         $directorTable = $this->getTable('magenest_director');
