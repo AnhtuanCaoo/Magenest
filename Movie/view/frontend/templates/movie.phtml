@@ -4,17 +4,25 @@
         <th>Movie</th>
         <th>Description</th>
         <th>Rating</th>
-        
+        <th>Director</th>
+        <th>Actors</th>
     </tr>
     <?php foreach ($block->getMovies() as $product): ?>
     
     <tr>
-        <td><?php echo $product->getName() ?></td>
+        <td><?php echo $product->getMovie() ?></td>
         <td><?php echo $product->getDescription() ?></td>
         <td><?php echo $product->getRating() ?></td>
+        <td><?php echo $product->getDirector()?></td>
+        <td><?php $actor = explode(',',$product->getName());
+            foreach($actor as $human){
+                echo ($human);
+                echo '<br>';
+            }
+        ?></td>
+
     </tr>
-    
 
     <?php endforeach; ?>
-</table>
 
+</table>
