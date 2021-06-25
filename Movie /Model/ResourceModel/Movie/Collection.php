@@ -1,7 +1,6 @@
 <?php
  
 namespace Magenest\Movie\Model\ResourceModel\Movie;
- 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     protected $_idFieldName = 'movie_id';
@@ -18,7 +17,14 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         $result = $this->getSelect()
         ->join($directorTable, 'main_table.director_id='.$directorTable.'.director_id',['director' => 'name'])
         ->join($actormovieTable,'main_table.movie_id='.$actormovieTable.'.movie_id')
-        ->join($actorTable,$actorTable.'.actor_id='.$actormovieTable.'.actor_id');
+        ->join($actorTable,$actorTable.'.actor_id='.$actormovieTable.'.actor_id')
+        // ->where('main_table.movie_id='.$actormovieTable.'.movie_id')
+        ->group('main_table.movie_id');
         return $result;
+    }
+    public function countRowInTable(){
+        $result = $this->getConnection();
+        $collect = $result->Select()->from($this->getMainTable(),['countrow' => 'COUNT(*)'] );
+        return (int)$result->fetchOne($collect);
     }
 }

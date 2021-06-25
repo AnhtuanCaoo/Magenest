@@ -1,0 +1,17 @@
+<?php
+
+    echo $block->getButtonHtml();
+?>
+
+<script type="text/javascript">
+    require([
+        'jquery',
+        'prototype'
+    ], function(jQuery){
+    jQuery('#reload_page').click(function () {
+        alert('Redirect and not save ?');
+        window.location.replace('http://example.com/admin/admin/system_config/edit/section/movie/')
+
+    });
+    });
+</script>

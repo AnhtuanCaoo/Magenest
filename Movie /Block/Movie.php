@@ -28,5 +28,8 @@ class Movie extends Template
         $collection->joinTable();
         return $collection;
         }
-    
+    public function countRow(){
+        $count= $this->_resultCollection->countRowInTable();
+        return $count;
+    }
 }
