@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magenest" translate="label" sortOrder="10">
+            <label>Magenest</label>
+        </tab>
+        <section id="customer_config" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Customer Config</label>
+            <tab>magenest</tab>
+            <resource>Magenest_Ecommerce::customer_config</resource>
+            <group id="online_course" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Online Course</label>
+                <comment>Select online course for each customer group</comment>
+
+                <field id="select" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customer Group</label>
+                    <source_model>Magenest\Ecommerce\Block\Config\Options</source_model>
+                </field>
+                <field id="start_date_notloggedin" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">0</field>
+                    </depends>
+                </field>
+                <field id="end_date_notloggedin" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">0</field>
+                    </depends>
+                </field>
+                <field id="start_date_general" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">1</field>
+                    </depends>
+                </field>
+                <field id="end_date_general" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">1</field>
+                    </depends>
+                </field>
+                <field id="start_date_wholesale" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">2</field>
+                    </depends>
+                </field>
+                <field id="end_date_wholesale" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">2</field>
+                    </depends>
+                </field>
+                <field id="start_date_retailer" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">3</field>
+                    </depends>
+                </field>
+                <field id="end_date_retailer" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">3</field>
+                    </depends>
+                </field>
+                <field id="start_date_guest" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">4</field>
+                    </depends>
+                </field>
+                <field id="end_date_guest" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">4</field>
+                    </depends>
+                </field>
+                <field id="start_date_silver" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">5</field>
+                    </depends>
+                </field>
+                <field id="end_date_silver" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">5</field>
+                    </depends>
+                </field>
+                <field id="start_date_gold" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">6</field>
+                    </depends>
+                </field>
+                <field id="end_date_gold" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">6</field>
+                    </depends>
+                </field>
+                <field id="start_date_b2b" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">7</field>
+                    </depends>
+                </field>
+                <field id="end_date_b2b" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">7</field>
+                    </depends>
+                </field>
+                <field id="start_date_china" translate="label" sortOrder="1" type="date" showInDefault="1" showInStore="1" >
+                    <label>Start Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">8</field>
+                    </depends>
+                </field>
+                <field id="end_date_china" translate="label" sortOrder="2" type="date" showInDefault="1" showInStore="1" >
+                    <label>End Date</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\DateField</frontend_model>
+                    <depends>
+                        <field id="select">8</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+        <section id="course_config" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Course Config</label>
+            <tab>magenest</tab>
+            <resource>Magenest_Ecommerce::customer_config</resource>
+            <group id="course" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Online Course</label>
+                <comment>Select online course for each customer group</comment>
+
+                <field id="customer_group" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Config</label>
+                    <frontend_model>Magenest\Ecommerce\Block\Adminhtml\Config\Ranges</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+
+            </group>
+        </section>
+    </system>
+</config>

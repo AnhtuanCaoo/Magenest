@@ -1,0 +1,42 @@
+<div class="dashboard-item dashboard-item-primary">
+    <div class="dashboard-item-title" >Numbers of module installed </div>
+    <div class="dashboard-item-content">
+        <strong class="dashboard-sales-value">
+            <span class="price"><?php echo $block->getModuleList() ?></span><span class="dashboard-sales-decimals"></span>
+        </strong>
+    </div>
+</div>
+<div>
+    <div class="dashboard-item-title" >Numbers of module installed but not in Magento </div>
+    <div class="dashboard-item-content">
+        <strong class="dashboard-sales-value">
+            <span class="price"><?php echo $block->getModuleNotInMagento() ?></span><span class="dashboard-sales-decimals"></span>
+        </strong>
+    </div>
+
+
+</div>
+<table class="admin__table-primary dashboard-data">
+    <thead>
+    <tr>
+        <th class="data-grid-th  no-link col-name"><span>Customer</span></th>
+        <th class="data-grid-th col-orders no-link col-orders_count"><span>Product</span></th>
+        <th class="data-grid-th col-avg no-link col-orders_avg_amount"><span>Orders</span></th>
+        <th class="data-grid-th col-total no-link col-orders_sum_amount"><span>Invoices</span></th>
+        <th class="data-grid-th col-total no-link col-orders_sum_amount"><span>Creditmemos</span></th>
+
+    </tr>
+    </thead>
+
+<tr>
+    <td><?php echo($block->getCustomername()) ?></td>
+    <td><?php echo($block->getProduct()) ?></td>
+    <td><?php echo($block->getOrder()) ?></td>
+    <td><?php echo($block->getInvoice()) ?></td>
+    <td><?php echo($block->getCreditmemo()) ?></td>
+
+</tr>
+</table>
+
+
+

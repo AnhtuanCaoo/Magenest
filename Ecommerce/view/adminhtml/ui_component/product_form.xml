@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <fieldset name="collapsible">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Online Course</item>
+                <item name="provider" xsi:type="string">product</item>
+                <item name="dataScope" xsi:type="string">data.product</item>
+                <item name="sortOrder" xsi:type="number">0</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="opened" xsi:type="boolean">false</item>
+                <item name="ns" xsi:type="string">product_form</item>
+            </item>
+
+        </argument>
+        <container name="online-course">
+            <field name="start_time" formElement="date">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="storeTimeZone" xsi:type="string">GMT</item>
+                        <item name="options" xsi:type="array">
+                            <item name="timeFormat" xsi:type="string">HH:mm:ss</item>
+                            <item name="showsTime" xsi:type="boolean">true</item>
+                        </item>
+                        <item name="source" xsi:type="string">catalog</item>
+                    </item>
+                </argument>
+                <settings>
+                    <validation>
+                        <rule name="validate-datetime" xsi:type="boolean">true</rule>
+                    </validation>
+                    <dataType>timestamp</dataType>
+                    <label translate="true">Start Date</label>
+                    <visible>true</visible>
+                    <dataScope>start_time</dataScope>
+                </settings>
+            </field>
+
+<!--            <field name="start">-->
+<!--                <argument name="data" xsi:type="array">-->
+
+<!--                    <item name="config" xsi:type="array">-->
+<!--                        <item name="label" xsi:type="string" translate="true">Start</item>-->
+<!--                        <item name="sortOrder" xsi:type="number">230</item>-->
+<!--                        <item name="dataType" xsi:type="string">datetime</item>-->
+<!--                        <item name="formElement" xsi:type="string">date</item>-->
+<!--                        <item name="dataScope" xsi:type="string">start</item>-->
+<!--                        <item name="options" xsi:type="array">-->
+<!--                            <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>-->
+<!--                            <item name="timeFormat" xsi:type="string">HH:mm:ss</item>-->
+<!--                            <item name="showsTime" xsi:type="boolean">true</item>-->
+<!--                        </item>-->
+<!--                    </item>-->
+
+<!--                </argument>-->
+<!--            </field>-->
+            <field name="end_time">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="storeTimeZone" xsi:type="string">GMT</item>
+                        <item name="label" xsi:type="string" translate="true">End</item>
+                        <item name="sortOrder" xsi:type="number">240</item>
+                        <item name="dataType" xsi:type="string">timestamp</item>
+                        <item name="formElement" xsi:type="string">date</item>
+                        <item name="dataScope" xsi:type="string">end_time</item>
+                        <item name="options" xsi:type="array">
+                            <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
+                            <item name="timeFormat" xsi:type="string">HH:mm:ss</item>
+                            <item name="showsTime" xsi:type="boolean">true</item>
+                        </item>
+                    </item>
+
+                </argument>
+            </field>
+        </container>
+        <button name="Add_Row">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="buttonClasses" xsi:type="string">custom-button-class</item>
+                    <item name="actions" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="targetName" xsi:type="string">dynamic_rows</item>
+                            <item name="actionName" xsi:type="string">dynamic_rows</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <displayAsLink>false</displayAsLink>
+                <title translate="true">Add Link</title>
+
+            </settings>
+        </button>
+        <button name="add_file">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="buttonClasses" xsi:type="string">custom-button-class</item>
+                    <item name="actions" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="targetName" xsi:type="string">dynamic_rows</item>
+                            <item name="actionName" xsi:type="string">dynamic_rows</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <displayAsLink>false</displayAsLink>
+                <title translate="true">Add File</title>
+
+            </settings>
+        </button>
+        <dynamicRows name="dynamic_rows">
+            <settings>
+                <addButtonLabel translate="true">Add Record</addButtonLabel>
+                <additionalClasses>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <componentType>dynamicRows</componentType>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                    </item>
+                </argument>
+                <actionDelete template="Magento_Backend/dynamic-rows/cells/action-delete" sortOrder="1">
+                    <settings>
+                        <componentType>actionDelete</componentType>
+                        <dataType>text</dataType>
+                        <additionalClasses>
+                            <class name="data-grid-actions-cell">true</class>
+                        </additionalClasses>
+                    </settings>
+                </actionDelete>
+                <field name="link" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="fit" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataScope>link</dataScope>
+                        <dataType>text</dataType>
+                        <label>Link</label>
+                    </settings>
+                </field>
+                <field name="link_description" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="fit" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataScope>link_description</dataScope>
+                        <dataType>text</dataType>
+                        <label>Description</label>
+                    </settings>
+                </field>
+
+            </container>
+        </dynamicRows>
+
+
+        <dynamicRows name="dynamic_rows_2">
+            <settings>
+                <addButtonLabel translate="true">Add Record</addButtonLabel>
+                <additionalClasses>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <componentType>dynamicRows</componentType>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                    </item>
+                </argument>
+                <actionDelete template="Magento_Backend/dynamic-rows/cells/action-delete" sortOrder="1">
+                    <settings>
+                        <componentType>actionDelete</componentType>
+                        <dataType>text</dataType>
+                        <additionalClasses>
+                            <class name="data-grid-actions-cell">true</class>
+                        </additionalClasses>
+                    </settings>
+                </actionDelete>
+                <field name="file_description" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="fit" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataScope>file_description</dataScope>
+                        <dataType>text</dataType>
+                        <label>Description</label>
+                    </settings>
+                </field>
+                <field name="bar">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string">Upload</item>
+                            <item name="visible" xsi:type="boolean">true</item>
+                            <item name="formElement" xsi:type="string">fileUploader</item>
+                            <item name="uploaderConfig" xsi:type="array">
+                                <item name="url" xsi:type="url" path="path/to/controller"/>
+                            </item>
+                        </item>
+
+                    </argument>
+                </field>
+
+            </container>
+        </dynamicRows>
+    </fieldset>
+
+</form>

@@ -1,0 +1,19 @@
+<h2>Connection</h2>
+<table>
+    <tr>
+        <th>Movie_id</th>
+        <th>Actor_id</th>
+        
+    </tr>
+    <?php foreach ($block->getActorMovie() as $product): ?>
+    
+    <tr>
+        <td><?php echo $product->getMovie_id() ?></td>
+        <td><?php echo $product->getActor_id() ?></td>
+        
+
+    </tr>
+
+    <?php endforeach; ?>
+
+</table>

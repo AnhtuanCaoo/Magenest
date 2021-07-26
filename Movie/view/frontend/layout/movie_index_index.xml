@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    
+    <head>
+        <title>Movie</title>
+        
+    </head>
+    <body >
+        <referenceContainer name="content">
+            <block class="Magenest\Movie\Block\Movie" name="movie" template="Magenest_Movie::movie.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magenest\Movie\Block\Director" name="director" template="Magenest_Movie::director.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magenest\Movie\Block\Actor" name="actor" template="Magenest_Movie::actor.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magenest\Movie\Block\ActorMovie" name="movieactor" template="Magenest_Movie::movieactor.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magenest\Movie\Block\Customer" name="customer" template="Magenest_Movie::customer.phtml" />
+        </referenceContainer>
+    </body>
+</page>

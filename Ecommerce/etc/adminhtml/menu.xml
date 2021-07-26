@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Magenest_Ecommerce::Magenest"
+            title="Magenest"
+            module="Magenest_Ecommerce"
+            sortOrder="50"
+            resource="Magenest_Ecommerce::Magenest"
+        />
+        <add
+            id="Magenest_Ecommerce::Module"
+            title="Module status"
+            module="Magenest_Ecommerce"
+            sortOrder="51"
+            resource="Magenest_Ecommerce::Magenest"
+            parent="Magenest_Ecommerce::Magenest"
+            action="ecommerce/module/index"
+
+            />
+    </menu>        
+</config>

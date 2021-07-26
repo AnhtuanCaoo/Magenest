@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <columns name="product_columns">
+<!--        <column name="start" class="Magenest\Ecommerce\Ui\Component\Listing\Column\StartTime" >-->
+<!--            <argument name="data" xsi:type="array">-->
+<!--                <item name="config" xsi:type="array">-->
+<!--                    <item name="filter" xsi:type="string">dateRange</item>-->
+<!--                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>-->
+<!--                    <item name="dataType" xsi:type="string">date</item>-->
+<!--                    <item name="dateFormat" xsi:type="string">yyyy-MM-dd hh:mm:ss</item>-->
+<!--                    <item name="label" xsi:type="string" translate="true">Start Time</item>-->
+<!--                </item>-->
+<!--            </argument>-->
+<!--        </column>-->
+        <column name="start_time" class="Magenest\Ecommerce\Ui\Component\Listing\Column\StartTime" >
+            <settings>
+                <dateFormat>yyyy-MM-dd hh:mm:ss</dateFormat>
+                <timezone>true</timezone>
+                <filter>datetimeRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Start time</label>
+                <dataScope>start_time</dataScope>
+            </settings>
+        </column>
+        <column name="end_time" class="Magenest\Ecommerce\Ui\Component\Listing\Column\EndTime" >
+            <settings>
+                <filter>datetimeRange</filter>
+                <dataType>date</dataType>
+                <dateFormat>yyyy-MM-dd hh:mm:ss</dateFormat>
+                <label translate="true">End time</label>
+                <timezone>true</timezone>
+                <dataScope>end_time</dataScope>
+
+            </settings>
+        </column>
+
+    </columns>
+</listing>

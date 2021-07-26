@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">movie_actor__connection_form.movie_actor_connection_form_data_source</item>
+            <item name="deps" xsi:type="string">movie_actor_connection_form.movie_actor_connection_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Add Connection</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">add_new_actor_movie_form</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="array">
+                <item name="name" xsi:type="string">back</item>
+                <item name="label" xsi:type="string" translate="true">Back</item>
+                <item name="class" xsi:type="string">back</item>
+                <item name="url" xsi:type="string">movie/movieactor/index</item>
+            </item>
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save actor</item>
+                <item name="label" xsi:type="string" translate="true">Save</item>
+                <item name="class" xsi:type="string">primary</item>
+                <item name="url" xsi:type="string">movie/movieactor/save</item>
+            </item>
+        </item>
+    </argument>
+    <dataSource name="movie_actor_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Magenest\Movie\Model\Config\ActorMovieDataProvider</argument>
+            <argument name="name" xsi:type="string">movie_actor_connection_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">id_table</argument>
+            <argument name="requestFieldName" xsi:type="string">id_table</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+                <item name="submit_url" path="movie/movieactor/save" xsi:type="url"/>
+            </item>
+        </argument>
+        <dataProvider class="Magenest\Movie\Model\Config\ActorDataProvider" name="movie_actor_connection_form_data_source">
+            <settings>
+                <requestFieldName>id_table</requestFieldName>
+                <primaryFieldName>id_table</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="magenest_movie_actor">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="collapsible" xsi:type="boolean">false</item>
+                <item name="label" xsi:type="string" translate="true">Movie and actor </item>
+                <item name="sortOrder" xsi:type="number">20</item>
+            </item>
+        </argument>
+
+
+
+        <field name="movie_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="label" xsi:type="string" translate="true">Movie ID</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_movie_actor</item>
+                    <item name="dataScope" xsi:type="string">movie_id</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                        <item name="max_text_length" xsi:type="number">50</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="actor_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="label" xsi:type="string" translate="true">Actor ID</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_movie_actor</item>
+                    <item name="dataScope" xsi:type="string">actor_id</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                        <item name="max_text_length" xsi:type="number">50</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        
+
+        
+    </fieldset>
+</form>

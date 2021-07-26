@@ -1,0 +1,24 @@
+<h2>Movie List</h2>
+<table>
+    <tr>
+        <th>Movie</th>
+        <th>Description</th>
+        <th>Rating</th>
+        <th>Director</th>
+        <th>Actors</th>
+    </tr>
+    <?php foreach ($block->getMovies() as $product): ?>
+    
+    <tr>
+        <td><?php echo $product->getMovie() ?></td>
+        <td><?php echo $product->getDescription() ?></td>
+        <td><?php echo $product->getRating() ?></td>
+        <td><?php echo $product->getDirector()?></td>
+        <td><?php echo $product->getActor()?></td>
+
+    </tr>
+
+    <?php endforeach; ?>
+        
+</table>
+<?php echo('Total Movies:  '.$block->countRow()) ?>

@@ -1,0 +1,14 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magenest_course" resource="default" engine="innodb" comment="Magenest Course">
+        <column xsi:type="int" name="record_id" unsigned="true" nullable="false" identity="false" comment="ID"/>
+
+        <column xsi:type="text" name="link" nullable="false" comment="link" />
+        <column xsi:type="text" name="link_description" nullable="false" comment="link description" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="record_id"/>
+        </constraint>
+
+    </table>
+
+</schema>

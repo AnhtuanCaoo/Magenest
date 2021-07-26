@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<body>
+    <referenceBlock name="footer_links">
+        <block class="Magento\Framework\View\Element\Html\Link\Current" name="b2c-link">
+        <arguments>
+            <argument name="label" translate="true"
+            xsi:type="string">B2c</argument>
+            <argument name="path"
+            xsi:type="string">ecommerce/B2c</argument>
+        </arguments>
+        </block>
+        <block class="Magento\Framework\View\Element\Html\Link\Current" name="b2b-link">
+        <arguments>
+            <argument name="label" translate="true"
+            xsi:type="string">B2b</argument>
+            <argument name="path"
+            xsi:type="string">ecommerce/B2b</argument>
+        </arguments>
+        </block>
+    </referenceBlock>
+</body>
+</page>
