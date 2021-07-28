@@ -8,7 +8,7 @@
     </event>
     <event name="customer_save_before">
         <observer name="phone" instance="Magenest\Customer\Observer\Adminhtml\Phone"/>
-
+        <observer name="b2b" instance="Magenest\Customer\Observer\Adminhtml\B2b"/>
     </event>
 
 </config>

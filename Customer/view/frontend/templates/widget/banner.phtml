@@ -1,0 +1,8 @@
+<?php
+/** \ExampleCorp\Learning\Block\Widget\Test $block */
+?>
+<?php if($block->getData('is_b2b') == '1'){ ?>
+    <h3><?= $block->escapeHtml($block->getData('title')) ?></h3>
+
+<?php } ?>
+    <?php echo $block->getB2bCustomer() ?>

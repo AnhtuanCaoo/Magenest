@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:helloworld:Magento_Widget:etc/widget.xsd">
+    <widget class="Magenest\Customer\Block\Widget\B2bBanner" id="banner_b2b">
+        <label>Magenest banner</label>
+        <description>B2b banner</description>
+        <parameters>
+<!--            <parameter name="customer" xsi:type="conditions" visible="true" required="true" sort_order="145" class="Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Conditions">-->
+<!--                <label translate="true">Customer</label>-->
+<!--            </parameter>-->
+            <parameter name="title" xsi:type="text" required="true" visible="true" sort_order="10" >
+                <label>Label</label>
+            </parameter>
+            <parameter name="is_b2b" xsi:type="select" visible="true" required="true" sort_order="20">
+                <label translate="true">Is B2b</label>
+                <options>
+                    <option name="yes" value="1">
+                        <label>Yes</label>
+                    </option>
+                    <option name="no" value="2" selected="true">
+                        <label>No</label>
+                    </option>
+
+                </options>
+
+            </parameter>
+
+        </parameters>
+    </widget>
+</widgets>
