@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Magenest_Blog::Magenest"
+            title="Blog"
+            module="Magenest_Blog"
+            sortOrder="50"
+            resource="Magenest_Blog::Magenest"
+        />
+        <add
+            id="Magenest_Blog::Blog"
+            title="Magenest Blog"
+            module="Magenest_Blog"
+            sortOrder="1"
+            parent="Magenest_Blog::Magenest"
+            action="blog/blog"
+            resource="Magenest_Blog::Magenest"
+        />
+
+        <add
+            id="Magenest_Blog::Category"
+            title="Magenest Category"
+            module="Magenest_Blog"
+            sortOrder="2"
+            parent="Magenest_Blog::Magenest"
+            action="blog/category"
+            resource="Magenest_Blog::Magenest"
+        />
+        <add
+            id="Magenest_BLog::BlockCategory"
+            title="Magenest Blog Category"
+            module="Magenest_Blog"
+            sortOrder="3"
+            parent="Magenest_Blog::Magenest"
+            action="blog/blogcategory"
+            resource="Magenest_Blog::Magenest"
+        />
+
+    </menu>
+</config>

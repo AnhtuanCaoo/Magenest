@@ -5,13 +5,16 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Api\AttributeInterface;
 use Magento\Customer\Model\CustomerFactory;
+use Magento\Authorization\Model\UserContextInterface;
 class Customer extends Template
 {
+    protected $userContext;
     protected $_attributeInterface;
     protected $_session;
     protected $_customerRepository;
     protected $customerFactory;
     public function __construct(
+        UserContextInterface $userContext,
         CustomerFactory $customerFactory,
         AttributeInterface $attributeInterface,
         Session $session,
@@ -20,6 +23,7 @@ class Customer extends Template
         array $data = [])
     {
         parent::__construct($context, $data);
+        $this->userContext = $userContext;
         $this->customerFactory = $customerFactory;
         $this->_customerRepository = $customerRepository;
         $this->_session = $session;
@@ -67,6 +71,15 @@ class Customer extends Template
         if($customerId){
             $customer = $this->customerFactory->create()->load($customerId);
             return $customer->getData('phone_number');
+        }
+        else return Null;
+    }
+    public function getB2b(){
+        $customerId = $this->userContext->getUserId();
+        if($customerId){
+            $customer = $this->customerFactory->create()->load($customerId);
+            $b2b = $customer->getData('is_b2b');
+            return $b2b;
         }
         else return Null;
     }

@@ -16,6 +16,16 @@
             <td><?php echo $block->getLastname() ?></td>
             <td><?php echo $block->getEmail() ?></td>
             <td><?php echo $block->getPhone() ?></td>
+
+
         </tr>
 
 </table>
+
+<div><h3>You are B2b ?</h3><?php if($block->getB2b() == '1'){
+        echo 'Yes';
+    }else{
+        echo 'No';
+    }
+
+    ?></div>

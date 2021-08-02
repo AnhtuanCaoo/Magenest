@@ -14,5 +14,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\CustomerData\AbstractItem">
 
+        <plugin name="Change_Product_Image_In_Minicart" type="Magenest\Checkout\Plugin\Minicart\Image" sortOrder="1"/>
+
+    </type>
 </config>
