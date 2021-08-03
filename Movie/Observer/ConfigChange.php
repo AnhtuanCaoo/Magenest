@@ -15,7 +15,7 @@ class ConfigChange implements ObserverInterface
      * @var RequestInterface
      */
     private $request;
-	protected $logger;
+    protected $logger;
     protected $_configWriter;
     protected $_customerInterface;
     /**
@@ -39,18 +39,18 @@ class ConfigChange implements ObserverInterface
 
     public function execute(EventObserver $observer)
     {
-       $this->logger->debug('okkkkkkkkkkkkkkk');
-       $groups = $this->request->getParam('groups');
-       $text = $groups['magenest_movie']['fields']['text_field']['value'];
-    //    $this->logger->debug($text);
+        $this->logger->debug('okkkkkkkkkkkkkkk');
+        $groups = $this->request->getParam('groups');
+        $text = $groups['magenest_movie']['fields']['text_field']['value'];
+        //    $this->logger->debug($text);
         if($text == 'Ping'){
             $text = 'Pong';
             $this->_configWriter->delete('movie/magenest_movie/text_field');
             $this->_configWriter->save('movie/magenest_movie/text_field',$text);
         }
-        
-       
-       
-       
+
+
+
+
     }
 }

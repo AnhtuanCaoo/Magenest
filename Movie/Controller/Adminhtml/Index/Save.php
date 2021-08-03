@@ -28,17 +28,17 @@ class Save extends Action
 
             $data = $this->getRequest()->getPostValue();
             // var_dump($data);
-    
+
             if(!$data){
                 $this->_redirect('movie');
             }
-    
+
             $newData = [
                 'name' => $data['name'],
                 'description' => $data['description'],
                 'rating' => $data['rating'],
                 'director_id' => $data['director_id'],
-    
+
             ];
             $post = $this->movieFactory->create();
 
@@ -70,7 +70,7 @@ class Save extends Action
                 }
             }else{
                 try{
-                    
+
                     $post->addData($newData);
                     $post->save();
                     $this->getMessageManager()->addSuccessMessage(__('Save ok'));
@@ -84,6 +84,6 @@ class Save extends Action
             $this->getMessageManager()->addErrorMessage(__('Save failed.'));
             return $this->resultRedirect->create()->setPath('movie/index/index');
         }
-        
+
     }
 }

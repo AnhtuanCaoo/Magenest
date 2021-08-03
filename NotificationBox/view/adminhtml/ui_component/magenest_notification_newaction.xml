@@ -271,23 +271,6 @@
                                 </action>
                             </actions>
                         </rule>
-                        <rule name="3">
-                            <value>hust_sale</value>
-                            <actions>
-                                <action name="0">
-                                    <target>magenest_notification_newaction.magenest_notification_newaction.general.order_status_review</target>
-                                    <callback>hide</callback>
-                                </action>
-                                <action name="1">
-                                    <target>magenest_notification_newaction.magenest_notification_newaction.general.order_status</target>
-                                    <callback>hide</callback>
-                                </action>
-                                <action name="2">
-                                    <target>magenest_notification_newaction.magenest_notification_newaction.general.set_abandoned_cart_time</target>
-                                    <callback>show</callback>
-                                </action>
-                            </actions>
-                        </rule>
                     </rules>
                     <enabled>true</enabled>
                 </switcherConfig>
@@ -361,7 +344,6 @@
                                 </action>
                             </actions>
                         </rule>
-
                     </rules>
                     <enabled>true</enabled>
                 </switcherConfig>

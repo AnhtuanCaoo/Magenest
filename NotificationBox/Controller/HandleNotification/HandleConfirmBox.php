@@ -58,7 +58,7 @@ class HandleConfirmBox extends Action
             $contentPopup = $this->helper->getContentPopup();
             $askCustomersToAllowWebPushSubscriptions = $this->helper->getAllowWebPush();
             $urlFirebase = $this->storeManagerInterface->getStore()->getBaseUrl().'pub/firebase-messaging-sw.js';
-
+            $urlFirebase = str_replace('/'.$this->storeManagerInterface->getStore()->getCode().'/','', $urlFirebase);
             $data = [
                 'time'=>$time*1000,
                 'timeShowPopup'=>$timeShowPopup*1000,

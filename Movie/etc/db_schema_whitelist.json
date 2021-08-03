@@ -35,10 +35,9 @@
     },
     "magenest_movie_actor": {
         "column": {
+            "id_table": true,
             "movie_id": true,
-            "actor_id": true,
-            "id": true,
-            "id_table": true
+            "actor_id": true
         },
         "index": {
             "MAGENEST_MOVIE_ACTOR_MOVIE_ID": true,
@@ -48,6 +47,16 @@
             "PRIMARY": true,
             "MAGENEST_MOVIE_ACTOR_MOVIE_ID_MAGENEST_MOVIE_MOVIE_ID": true,
             "MAGENEST_MOVIE_ACTOR_ACTOR_ID_MAGENEST_ACTOR_ACTOR_ID": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "magenest_custom_column": true
+        }
+    },
+    "sales_order_grid": {
+        "column": {
+            "magenest_custom_column": true
         }
     }
 }

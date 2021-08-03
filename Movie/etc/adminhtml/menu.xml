@@ -1,76 +1,12 @@
-<?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add
-            id="Magenest_Movie::Magenest"
-            title="Magenest"
-            module="Magenest_Movie"
-            sortOrder="50"
-            resource="Magenest_Movie::Magenest"
-        />
-        <add
-            id="Magenest_Movie::MovieSection"
-            title="Movie"
-            module="Magenest_Movie"
-            sortOrder="51"
-            resource="Magenest_Movie::Magenest"
-            parent="Magenest_Movie::Magenest"
-            />
-        <add
-            id="Magenest_Movie::Movie"
-            title="Magenest Movie"
-            module="Magenest_Movie"
-            sortOrder="52"
-            parent="Magenest_Movie::MovieSection"
-            action="movie/"
-            resource="Magenest_Movie::Movie"
-        />
-        
-        <add
-            id="Magenest_Movie::MovieDirector"
-            title="Magenest Director"
-            module="Magenest_Movie"
-            sortOrder="53"
-            parent="Magenest_Movie::MovieSection"
-            action="movie/director"
-            resource="Magenest_Movie::Movie"
-        />
-        <add
-            id="Magenest_Movie::MovieActor"
-            title="Magenest Actor"
-            module="Magenest_Movie"
-            sortOrder="54"
-            parent="Magenest_Movie::MovieSection"
-            action="movie/actor"
-            resource="Magenest_Movie::Movie"
-        />
-        <add
-            id="Magenest_Movie::MovieAndActor"
-            title="Movie and Actor"
-            module="Magenest_Movie"
-            sortOrder="55"
-            parent="Magenest_Movie::MovieSection"
-            action="movie/movieactor"
-            resource="Magenest_Movie::Movie"
-        />
-
-
-        <add
-            id="Magenest_Movie::Config"
-            title="Config"
-            module="Magenest_Movie"
-            sortOrder="57"
-            resource="Magenest_Movie::Magenest"
-            parent="Magenest_Movie::Magenest"
-        />
-        <add
-            id="Magenest_Movie::MovieConfig"
-            title="Magenest Movie Config"
-            module="Magenest_Movie"
-            sortOrder="58"
-            parent="Magenest_Movie::Config"
-            action="admin/system_config/edit/section/movie/"
-            resource="Magenest_Movie::MovieConfig"
-        />
+        <add id="Magenest_Movie::Magenest" title="Magenest" module="Magenest_Movie" sortOrder="50" resource="Magenest_Movie::Magenest"/>
+        <add id="Magenest_Movie::MovieSection" title="Movie" module="Magenest_Movie" sortOrder="51" resource="Magenest_Movie::Magenest" parent="Magenest_Movie::Magenest"/>
+        <add id="Magenest_Movie::Movie" title="Magenest Movie" module="Magenest_Movie" sortOrder="52" parent="Magenest_Movie::MovieSection" action="movie/" resource="Magenest_Movie::Movie"/>
+        <add id="Magenest_Movie::MovieDirector" title="Magenest Director" module="Magenest_Movie" sortOrder="53" parent="Magenest_Movie::MovieSection" action="movie/director" resource="Magenest_Movie::Movie"/>
+        <add id="Magenest_Movie::MovieActor" title="Magenest Actor" module="Magenest_Movie" sortOrder="54" parent="Magenest_Movie::MovieSection" action="movie/actor" resource="Magenest_Movie::Movie"/>
+        <add id="Magenest_Movie::MovieAndActor" title="Movie and Actor" module="Magenest_Movie" sortOrder="55" parent="Magenest_Movie::MovieSection" action="movie/movieactor" resource="Magenest_Movie::Movie"/>
+        <add id="Magenest_Movie::Config" title="Config" module="Magenest_Movie" sortOrder="57" resource="Magenest_Movie::Magenest" parent="Magenest_Movie::Magenest"/>
+        <add id="Magenest_Movie::MovieConfig" title="Magenest Movie Config" module="Magenest_Movie" sortOrder="58" parent="Magenest_Movie::Config" action="admin/system_config/edit/section/movie/" resource="Magenest_Movie::MovieConfig"/>
     </menu>
 </config>

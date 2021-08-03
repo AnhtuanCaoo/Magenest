@@ -18,5 +18,5 @@ class Index extends \Magento\Backend\App\Action
         $resultPage->getConfig()->getTitle()->prepend(__('Movie and actor'));
         return $resultPage;
     }
-    
+
 }

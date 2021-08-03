@@ -178,7 +178,8 @@ class SendNotification implements ObserverInterface
                     $notification['customer_id'] = $customerId;
                     $notification['icon'] = $notification['image'];
                     $notification['star'] = CustomerNotificationModel::UNSTAR;
-                    $notification['status'] = CustomerNotificationModel::STATUS_UNREAD;;
+                    $notification['status'] = CustomerNotificationModel::STATUS_UNREAD;
+                    $notification['notification_id'] = $notification['id'];
                     $customerNotification = $this->customerNotificationFactory->create();
                     $customerNotification->addData($notification);
                     $this->customerNotificationResource->save($customerNotification);

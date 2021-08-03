@@ -1,0 +1,20 @@
+<?php if ($content = $block->getContent('Magenest-banner')) { ?>
+
+    <div id="modal-promotion" style="display:none;">
+
+        <img width="100%" src="https://example.com/media/wysiwyg/images.png" />
+
+    </div>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "modal_promotion": {
+                            "component": "Magenest_Frontend/js/modal_promotion"
+                        }
+                     }
+                }
+            }
+        }
+    </script><?php } ?>
