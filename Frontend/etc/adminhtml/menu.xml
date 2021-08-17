@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Magenest_Frontend::Magenest"
+            title="Magenest Banner"
+            module="Magenest_Frontend"
+            sortOrder="50"
+            resource="Magenest_Frontend::Magenest"
+        />
+        <add
+            id="Magenest_Frontend::Banner"
+            title="Banner"
+            module="Magenest_Frontend"
+            sortOrder="51"
+            resource="Magenest_Frontend::Magenest"
+            parent="Magenest_Frontend::Magenest"
+            action="frontend/banner/index"
+
+        />
+    </menu>
+</config>

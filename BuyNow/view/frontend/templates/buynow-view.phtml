@@ -1,0 +1,29 @@
+<?php $helper = $this->helper(\Magenest\BuyNow\Helper\Data::class); ?>
+<?php $formId = $helper->getAddToCartFormId(); ?>
+<?php $buttonTitle = $helper->getButtonTitle() ?>
+<?php $enableGuest = $helper->getConfig('buynow/general/enable_guest');
+$customer = $block->getCustomerId();
+?>
+<?php if($customer == 1 || $enableGuest == 1 && $customer == 0){
+    $show = 'block';
+}else{
+    $show = 'none'; ?>
+
+<?php } ?>
+
+<div class="buynow-button" style="display: <?php echo $show ?>">
+    <button type="submit"
+            title="<?= $block->escapeHtml(__($buttonTitle)) ?>"
+            id="buy-now"
+            class="action primary buy-now-btn"
+            data-mage-init='
+            {
+                "Magenest_BuyNow/js/buy-now": {
+                    "form": "#<?= $block->escapeHtml($formId); ?>"
+                }
+            }
+            '>
+        <span><?= $block->escapeHtml(__($buttonTitle)) ?></span>
+    </button>
+</div>
+

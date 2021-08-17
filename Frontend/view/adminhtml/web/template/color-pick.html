@@ -1,0 +1,29 @@
+<div class="design_theme_ua_regexp" id="grid_610cff15bd094">
+    <div class="admin__control-table-wrapper">
+        <table class="admin__control-table" id="course_config_course_customer_group">
+            <thead>
+            <tr>
+                <th>Color</th>
+                <th>Code </th>
+                <th class="col-actions" colspan="1">Action</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <td colspan="4" class="col-actions-add">
+                    <button data-bind="click: addColor">Add</button>
+
+                </td>
+            </tr>
+            </tfoot>
+            <tbody data-bind="foreach: options">
+            <tr>
+                <td><input type="text" data-bind="attr: {name: nameColor,value: color_name}" /></td>
+                <td><input  type="color" data-bind="attr: {name: nameColorCode,value: color_code}"/></td>
+                <td><button class="action-delete" data-bind="click: $parent.deleteRecord.bind($parent)"></button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

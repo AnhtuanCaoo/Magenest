@@ -2,43 +2,39 @@
 namespace Magenest\Customer\Observer\Adminhtml;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Customer\Model\CustomerFactory;
+use Magento\Framework\App\Action\Context;
+use Magento\Eav\Model\Config;
+
 class Avatar implements ObserverInterface
 {
+    protected $eavConfig;
     protected $request;
     protected $customerFactory;
-
+    protected $getmessenger;
+    protected $attributeResource;
     public function __construct(
+        \Magento\Customer\Model\ResourceModel\Attribute $attributeResource,
+        Config $eavConfig,
         CustomerFactory $customerFactory,
-        \Magento\Framework\App\RequestInterface $request
+        \Magento\Framework\App\RequestInterface $request,
+        Context $context
     )
     {
-        $this->customerFactory =$customerFactory;
+        $this->attributeResource = $attributeResource;
+        $this->eavConfig = $eavConfig;
+        $this->getmessenger = $context->getMessageManager();
+        $this->customerFactory = $customerFactory;
         $this->request = $request;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $data = $this->request->getParams();
-        if($data['customer']['avatar_url'] != ""){
-            $avatar = $data['customer']['avatar_url'];
 
-        }else{
-            $avatar = $data['customer']['avatar']['0']['url'];
-
-        }
-        $id = $data['customer_id'];
-        $customer = $this->customerFactory->create()->load($id);
-        $customer->setData('avatar_url', $avatar);
-        $customer->save();
-
-
-
-
-
-
-
-
+        $req = $this->request->getParams();
+        $data = $observer->getData('customer');
 
 
     }
+
+
 }

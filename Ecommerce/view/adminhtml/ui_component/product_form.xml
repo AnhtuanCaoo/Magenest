@@ -96,12 +96,6 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="buttonClasses" xsi:type="string">custom-button-class</item>
-                    <item name="actions" xsi:type="array">
-                        <item name="0" xsi:type="array">
-                            <item name="targetName" xsi:type="string">dynamic_rows</item>
-                            <item name="actionName" xsi:type="string">dynamic_rows</item>
-                        </item>
-                    </item>
                 </item>
             </argument>
             <settings>
@@ -203,14 +197,14 @@
                         <label>Description</label>
                     </settings>
                 </field>
-                <field name="bar">
+                <field name="file">
                     <argument name="data" xsi:type="array">
                         <item name="config" xsi:type="array">
                             <item name="label" xsi:type="string">Upload</item>
                             <item name="visible" xsi:type="boolean">true</item>
                             <item name="formElement" xsi:type="string">fileUploader</item>
                             <item name="uploaderConfig" xsi:type="array">
-                                <item name="url" xsi:type="url" path="path/to/controller"/>
+                                <item name="url" xsi:type="url" path="frontend/product/upload"/>
                             </item>
                         </item>
 

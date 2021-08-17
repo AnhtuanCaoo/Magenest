@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">frontend_banner_form.frontend_banner_form_data_source</item>
+            <item name="deps" xsi:type="string">frontend_banner_form.frontend_banner_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Add Banner</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">add_new_banner_form</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="array">
+                <item name="name" xsi:type="string">back</item>
+                <item name="label" xsi:type="string" translate="true">Back</item>
+                <item name="class" xsi:type="string">back</item>
+                <item name="url" xsi:type="string">frontend/banner/index</item>
+            </item>
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save blog</item>
+                <item name="label" xsi:type="string" translate="true">Save</item>
+                <item name="class" xsi:type="string">primary</item>
+                <item name="url" xsi:type="string">frontend/banner/save</item>
+            </item>
+        </item>
+    </argument>
+    <dataSource name="frontend_banner_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Magenest\Frontend\Model\DataProvider\BannerProvider</argument>
+            <argument name="name" xsi:type="string">frontend_banner_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+                <item name="submit_url" path="frontend/banner/save" xsi:type="url"/>
+            </item>
+        </argument>
+<!--        <dataProvider class="Magenest\Blog\Model\Config\BlogDataProvider" name="blog_blog_form_data_source">-->
+<!--            <settings>-->
+<!--                <requestFieldName>id</requestFieldName>-->
+<!--                <primaryFieldName>id</primaryFieldName>-->
+<!--            </settings>-->
+<!--        </dataProvider>-->
+    </dataSource>
+    <fieldset name="magenest_banner">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="collapsible" xsi:type="boolean">false</item>
+                <item name="label" xsi:type="string" translate="true">Magenest banner </item>
+                <item name="sortOrder" xsi:type="number">20</item>
+            </item>
+        </argument>
+
+
+
+        <field name="enabled" formElement="checkbox" sortOrder="0"
+               component="Magento_Ui/js/form/element/single-checkbox-toggle-notice">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">magenest_banner</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Enabled</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <prefer>toggle</prefer>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="images">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">varchar</item>
+                    <item name="label" xsi:type="string" translate="true">Image</item>
+                    <item name="formElement" xsi:type="string">imageUploader</item>
+                    <item name="elementTmpl" xsi:type="string">ui/form/element/uploader/uploader</item>
+                    <item name="previewTmpl" xsi:type="string">ui/form/element/uploader/preview</item>
+                    <item name="required" xsi:type="boolean">true</item>
+                    <item name="allowedExtensions" xsi:type="string">jpg jpeg png</item>
+                    <item name="uploaderConfig" xsi:type="array">
+                        <item name="url" xsi:type="url" path="frontend/banner/upload"/>
+                    </item>
+                    <item name="notice" xsi:type="string"><![CDATA[Recommended ratio 1:1]]></item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="title">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">varchar</item>
+                    <item name="label" xsi:type="string" translate="true">Title</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_banner</item>
+                    <item name="dataScope" xsi:type="string">title</item>
+
+                </item>
+            </argument>
+        </field>
+        <field name="name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">varchar</item>
+                    <item name="label" xsi:type="string" translate="true">Name</item>
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="source" xsi:type="string">magenest_banner</item>
+                    <item name="dataScope" xsi:type="string">name</item>
+
+                </item>
+            </argument>
+        </field>
+        <field name="link">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">varchar</item>
+                    <item name="label" xsi:type="string" translate="true">Link</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_banner</item>
+                    <item name="dataScope" xsi:type="string">link</item>
+
+                </item>
+            </argument>
+        </field>
+        <field name="add_text">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">varchar</item>
+                    <item name="label" xsi:type="string" translate="true">Text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_banner</item>
+                    <item name="dataScope" xsi:type="string">add_text</item>
+
+                </item>
+            </argument>
+        </field>
+
+
+
+
+
+    </fieldset>
+</form>

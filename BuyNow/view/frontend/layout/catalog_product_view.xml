@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.addtocart">
+<!--            <block class="Magenest\BuyNow\Block\Product\Detail"-->
+<!--                   name="product.buynow"-->
+<!--                   template="Magenest_BuyNow::buynow-view.phtml"-->
+<!--                   before="-" ifconfig="buynow/general/enable_view"/>-->
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magenest_BuyNow::catalog/product/view/addtocart.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="product.info.addtocart.additional">
+<!--            <block class="Magenest\BuyNow\Block\Product\Detail"-->
+<!--                   name="product.buynow.config"-->
+<!--                   template="Magenest_BuyNow::buynow-view.phtml"-->
+<!--                   before="-" ifconfig="buynow/general/enable_view"/>-->
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magenest_BuyNow::catalog/product/view/addtocart.phtml</argument>
+            </action>
+        </referenceBlock>
+
+    </body>
+</page>

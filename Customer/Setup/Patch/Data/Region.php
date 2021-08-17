@@ -8,16 +8,20 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Zend_Validate_Exception;
+use Magento\Eav\Model\Config;
+use Magento\Customer\Model\Customer;
 
 class Region implements DataPatchInterface
 {
     private $moduleDataSetup;
     private $eavSetupFactory;
-
+    private $eavConfig;
     public function __construct(
+        Config  $eavConfig,
         ModuleDataSetupInterface $moduleDataSetup,
         CustomerSetupFactory $eavSetupFactory
     ) {
+        $this->eavConfig = $eavConfig;
         $this->eavSetupFactory = $eavSetupFactory;
         $this->moduleDataSetup = $moduleDataSetup;
     }
@@ -78,6 +82,12 @@ class Region implements DataPatchInterface
             'sort_order' => 10,
             'source' => \Magenest\Customer\Block\Config\Options::class
         ]);
+        $attributeSetId = $eavSetup->getDefaultAttributeSetId(Customer::ENTITY);
+        $attributeGroupId = $eavSetup->getDefaultAttributeGroupId(Customer::ENTITY);
+
+        $attribute = $this->eavConfig->getAttribute(Customer::ENTITY, 'vn_region');
+        $attribute->setData('attribute_set_id', $attributeSetId);
+        $attribute->setData('attribute_group_id', $attributeGroupId);
         $attribute = $eavSetup->getEavConfig()->getAttribute('customer_address', 'vn_region')->addData([
             'used_in_forms' => [
                 'adminhtml_customer_address',

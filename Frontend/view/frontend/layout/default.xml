@@ -10,6 +10,11 @@
                    template="Magenest_Frontend::banner.phtml"
                    name="banner"
                    as="banner"/>
+
         </referenceContainer>
+        <referenceContainer name="header.panel">
+            <block class="Magenest\Frontend\Block\Background" name="header.content" template="Magenest_Frontend::background.phtml" before="header.links" />
+        </referenceContainer>
+
     </body>
 </page>

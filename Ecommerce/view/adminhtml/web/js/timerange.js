@@ -8,6 +8,8 @@
         timeFormat: 'HH:mm:ss',
         changeMonth: true,
         changeYear: true,
-        showsTime: true
+        showsTime: true,
+
     });
+
 });

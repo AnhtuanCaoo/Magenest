@@ -4,5 +4,6 @@
     <referenceContainer name="header.panel">
         <block  class="Magenest\Customer\Block\Customer" name="top.header" template="Magenest_Customer::customerheader.phtml" before="header.links"/>
     </referenceContainer>
+
 </body>
 </page>

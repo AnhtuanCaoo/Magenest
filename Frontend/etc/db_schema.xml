@@ -1,0 +1,30 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magenest_banner" resource="default" engine="innodb" comment="Magenest banner table">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="boolean" name="enabled"  nullable="false" comment="Enabled" />
+        <column xsi:type="varchar" name="name" length="64"  nullable="true" comment="Banner name"/>
+        <column xsi:type="varchar" name="title" length="64"  nullable="true" comment="Title" />
+        <column xsi:type="varchar" name="link"  length="64"  nullable="true" comment="Link" />
+        <column xsi:type="varchar" name="add_text" length="1000" nullable="true" comment="Text" />
+        <column xsi:type="varchar" name="images" length="1000"  nullable="true" comment="images" />
+        <column xsi:type="timestamp" name="created_at"  on_update="false" nullable="true" default="CURRENT_TIMESTAMP"
+                comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="true" default="CURRENT_TIMESTAMP"
+                comment="Update Time"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="MAGENEST_BANNER_NAME" indexType="btree">
+            <column name="name"/>
+        </index>
+        <index referenceId="MAGENEST_BANNER_TITLE" indexType="btree">
+            <column name="title"/>
+        </index>
+
+
+    </table>
+
+
+
+
+</schema>

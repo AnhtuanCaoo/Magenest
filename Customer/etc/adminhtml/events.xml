@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
 
-    <event name="adminhtml_customer_prepare_save">
-        <observer name="avatar" instance="Magenest\Customer\Observer\Adminhtml\Avatar"/>
-<!--        <observer name="phone" instance="Magenest\Customer\Observer\Adminhtml\Phone"/>-->
+<!--    <event name="adminhtml_customer_prepare_save">-->
+<!--        <observer name="avatar" instance="Magenest\Customer\Observer\Adminhtml\Avatar"/>-->
+<!--&lt;!&ndash;        <observer name="phone" instance="Magenest\Customer\Observer\Adminhtml\Phone"/>&ndash;&gt;-->
 
-    </event>
+<!--    </event>-->
     <event name="customer_save_before">
         <observer name="phone" instance="Magenest\Customer\Observer\Adminhtml\Phone"/>
         <observer name="b2b" instance="Magenest\Customer\Observer\Adminhtml\B2b"/>
+<!--        <observer name="avatar" instance="Magenest\Customer\Observer\Adminhtml\Avatar"/>-->
     </event>
 
 </config>

@@ -3,7 +3,7 @@
         <column xsi:type="int" name="record_id" unsigned="true" nullable="false" identity="false" comment="ID"/>
 
         <column xsi:type="text" name="link" nullable="false" comment="link" />
-        <column xsi:type="text" name="link_description" nullable="false" comment="link description" />
+        <column xsi:type="text" name="file" nullable="false" comment="information" />
 
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="record_id"/>

@@ -1,1 +1,10 @@
-<?php $block->validate() ?>
+<?php $banner = $block->getBanner() ; ?>
+<?php if($block->isB2b() == 1) { ?>
+    <img src="<?php echo $banner[3][0]['url'] ?>">
+<?php } ?>
+<div class="banner" >
+    <img style="width: 100%" src="<?php echo $banner[0][0]['url'] ?>">
+    <img style="width: 100%" src="<?php echo $banner[1][0]['url'] ?>">
+
+</div>
+

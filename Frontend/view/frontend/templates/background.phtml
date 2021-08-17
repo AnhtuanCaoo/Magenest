@@ -1,0 +1,34 @@
+<script>
+    window.customConfig = <?php echo $block->getColor() ?>
+</script>
+<div id="background-select" data-bind="scope:'background-select'">
+
+        <select id="bgcolor" name="background-color-select" data-bind="options: options,
+                                                    optionsText: 'color',
+                                                    optionsValue: 'code',
+                                                    value: selectedColor,
+                                                    optionsCaption: 'Choose...'"></select>
+<!--         <span data-bind="text: selectedColorCode"></span>-->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#background-select": {
+            "Magento_Ui/js/core/app": {
+               "components": {
+                    "background-select": {
+                        "component": "Magenest_Frontend/js/background"
+                    }
+                }
+            }
+        }
+    }
+    </script>
+
+</div>
+<style>
+    .page-header .header.panel{
+        display: flex;
+    }
+
+</style>
+

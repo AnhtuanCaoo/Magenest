@@ -32,13 +32,12 @@ class B2b implements ObserverInterface
 
 
         $data = $observer->getData('customer');
-        if($data->getData('is_b2b')){
             $b2b = $data->getData('is_b2b');
 
                     $tmp = $data->setData('is_b2b', $b2b);
                     $observer->setData('customer', $tmp);
 
-            }
+
 
     }
 

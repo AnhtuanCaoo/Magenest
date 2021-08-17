@@ -1,0 +1,19 @@
+<script>
+    window.customConfig = <?php echo \Zend_Json::encode($block->getColor()) ?>
+</script>
+<div id="custom-component" data-bind="scope:'customcomponent'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#custom-component": {
+            "Magento_Ui/js/core/app": {
+               "components": {
+                    "customcomponent": {
+                        "component": "Magenest_Frontend/js/color"
+                    }
+                }
+            }
+        }
+    }
+    </script>
+</div>
