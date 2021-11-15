@@ -3,31 +3,35 @@ namespace Magenest\NotificationBox\Api;
 
 /**
  * Interface HandleNotificationInterface
- * @package Magenest\NotificationBox\Api
+ * Magenest\NotificationBox\Api
  */
-interface HandleNotificationInterface {
-
-    /** delete notifications
+interface HandleNotificationInterface
+{
+    /**
+     * Delete notifications
+     *
      * @param int $customerId
      * @param string $notificationId
      * @return array
      */
-    public function deleteNotifications($customerId,$notificationId);
+    public function deleteNotifications($customerId, $notificationId);
 
-    /** mark as read notifications
+    /**
+     * Mark as read notifications
+     *
      * @param int $customerId
      * @param string $notificationId
      * @return array
      */
-    public function markAsRead($customerId,$notificationId);
+    public function markAsRead($customerId, $notificationId);
 
-
-    /** mark important notifications
+    /**
+     * Mark important notifications
+     *
+     * @param string $customerId
+     * @param int $notificationId
      * @param int $status
-     * @param int $customerId
-     * @param string $notificationId
      * @return array
      */
-    public function markImportant($customerId,$notificationId,$status);
-
+    public function markImportant($customerId, $notificationId, $status);
 }

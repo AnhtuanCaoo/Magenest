@@ -11,17 +11,21 @@ class Index extends \Magento\Backend\App\Action
     protected $resultPageFactory;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param PageFactory $resultPageFactory
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory
-    ){
+    ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
     }
-
+    /**
+     * Create page
+     */
     public function execute()
     {
 
@@ -29,6 +33,9 @@ class Index extends \Magento\Backend\App\Action
         $resultPage->getConfig()->getTitle()->prepend(__('Notifications'));
         return $resultPage;
     }
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification');

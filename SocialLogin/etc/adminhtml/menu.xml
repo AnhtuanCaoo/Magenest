@@ -27,5 +27,14 @@
              action="sociallogin/socialAccount/monitor"
              resource="Magenest_SocialLogin::menu_sociallogin"
         />
+        <add id="Magenest_SocialLogin::ConfigurationSocialLogin"
+             title="Configuration"
+             translate="title"
+             module="Magenest_SocialLogin"
+             sortOrder="30"
+             parent="Magenest_SocialLogin::Menu_SocialLogin"
+             action="adminhtml/system_config/edit/section/magenest"
+             resource="Magenest_SocialLogin::config_sociallogin"
+        />
     </menu>
 </config>

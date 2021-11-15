@@ -5,6 +5,8 @@ namespace Magenest\NotificationBox\Ui\Component\Notification;
 class Unit implements \Magento\Framework\Option\ArrayInterface
 {
     /**
+     * Time options
+     *
      * @return array
      */
     public function toOptionArray()

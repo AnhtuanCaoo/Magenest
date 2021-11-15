@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Magenest_Forum::css/blog.css" rel="stylesheet" type="text/css"  />
+    </head>
+    <body>
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true" />
+<!--        <referenceContainer name="sidebar.main">-->
+<!--            <block class="Magenest\Forum\Block\Blog" name="blog.top" template="Magenest_Forum::topblog.phtml" />-->
+<!--        </referenceContainer>-->
+        <referenceContainer name="sidebar.additional">
+            <block class="Magenest\Forum\Block\Blog" name="blog" template="Magenest_Forum::bloglist.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magenest\Forum\Block\Blog" name="blog-list" template="Magenest_Forum::blog.phtml" />
+        </referenceContainer>
+    </body>
+</page>

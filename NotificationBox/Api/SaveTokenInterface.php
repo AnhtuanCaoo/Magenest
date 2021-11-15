@@ -3,22 +3,26 @@ namespace Magenest\NotificationBox\Api;
 
 /**
  * Interface SaveTokenInterface
- * @package Magenest\NotificationBox\Api
+ * Magenest\NotificationBox\Api
  */
-interface SaveTokenInterface {
-
-    /** save customer Token
+interface SaveTokenInterface
+{
+    /**
+     * Save customer Token
+     *
      * @param string $token
      * @param int $customerId
      * @param int $deviceId
      * @return array
      */
-    public function registerForCustomer($token,$customerId,$deviceId);
+    public function registerForCustomer($token, $customerId, $deviceId);
 
-    /** save guest Token
+    /**
+     * Save guest Token
+     *
      * @param string $token
      * @param int $deviceId
      * @return array
      */
-    public function registerForGuest($token,$deviceId);
+    public function registerForGuest($token, $deviceId);
 }

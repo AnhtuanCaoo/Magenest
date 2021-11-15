@@ -1,0 +1,33 @@
+<?php $url = $block->getbaseUrl() ?>
+<form action="<?php echo $url ?>/forum/index/save" method="post" >
+    <div>
+        <label for="Title">Title</label>
+        <input id="Title" name="title"/>
+    </div>
+    <div>
+        <label for="img">Select banner:</label>
+        <input type="file" id="img" name="image" accept="image/*">
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <input id="description" name="description"/>
+    </div>
+    <div>Content</div>
+    <textarea name="content" class="input-text" id="post_content"></textarea>
+    <button type="submit">Submit</button>
+</form>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/adminhtml/wysiwyg/tiny_mce/setup'
+    ], function(jQuery){
+        wysiwyg = new wysiwygSetup('post_content', {
+            'width':'100%',  // defined width of editor
+            'height':'300px', // height of editor
+            'plugins':[{'name':'image'}], // for image
+            'tinymce4':{'toolbar':'formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link table charmap','plugins':'advlist autolink lists link charmap media noneditable table contextmenu paste code help table'
+            }
+        });
+        wysiwyg.setup('exact');
+    });
+</script>

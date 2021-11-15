@@ -1,0 +1,25 @@
+{
+    "salesrule_coupon": {
+        "column": {
+            "images": true
+        }
+    },
+    "salesrule": {
+        "column": {
+            "images": true
+        }
+    },
+    "coupon_extra_information": {
+        "column": {
+            "id": true,
+            "rule_id": true,
+            "coupon_id": true,
+            "images": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "COUPON_EXTRA_INFORMATION_RULE_ID_SALESRULE_COUPON_RULE_ID": true,
+            "COUPON_EXTRA_INFORMATION_COUPON_ID_SALESRULE_COUPON_COUPON_ID": false
+        }
+    }
+}

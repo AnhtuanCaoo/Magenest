@@ -15,7 +15,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class RestoreDefaultNotification
- * @package Magenest\NotificationBox\Controller\Adminhtml\NotificationType
+ * Magenest\NotificationBox\Controller\Adminhtml\NotificationType
  */
 class RestoreDefaultNotification extends \Magento\Backend\App\Action
 {
@@ -40,6 +40,8 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
     private $helper;
 
     /**
+     * Construct
+     *
      * @param Action\Context $context
      * @param NotificationTypeFactory $notificationTypeFactory
      * @param NotificationType $notificationType
@@ -56,8 +58,7 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
         CollectionFactory $collectionFactory,
         StoreManagerInterface $storeManagerInterface,
         Helper $helper
-        )
-    {
+    ) {
         parent::__construct($context);
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
         $this->notificationType= $notificationType;
@@ -67,8 +68,6 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
         $this->storeManagerInterface = $storeManagerInterface;
         $this->helper = $helper;
     }
-
-
     /**
      * Save action
      *
@@ -76,7 +75,7 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        try{
+        try {
             /** @var Redirect $resultRedirect */
             $resultRedirect = $this->resultRedirectFactory->create();
             $currentStore = $this->storeManagerInterface->getStore();
@@ -87,40 +86,41 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
                 NotificationModel::REVIEW_REMINDERS => NotificationModel::REVIEW_REMINDERS,
                 NotificationModel::ORDER_STATUS_UPDATE => NotificationModel::ORDER_STATUS_UPDATE];
             $listExistDefaultNotificationType = $this->collectionFactory->create()
-                ->addFieldToFilter('default_type',array("in" => array($listDefaultNotificationType)));
+                ->addFieldToFilter('default_type', ["in" => [$listDefaultNotificationType]]);
 
-            foreach ($listExistDefaultNotificationType as $notificationType){
+            foreach ($listExistDefaultNotificationType as $notificationType) {
                 unset($listDefaultNotificationType[$notificationType->getDefaultType()]);
             }
             $totalRestore = 0;
-            foreach ($listDefaultNotificationType as $notificationType){
-                if($notificationType == NotificationModel::REVIEW_REMINDERS){
-                    $this->addReviewReminderNotificationType($mediaUrl,$listDefaultImage);
+            foreach ($listDefaultNotificationType as $notificationType) {
+                if ($notificationType == NotificationModel::REVIEW_REMINDERS) {
+                    $this->addReviewReminderNotificationType($mediaUrl, $listDefaultImage);
                     $totalRestore ++;
-                }
-                elseif ($notificationType == NotificationModel::ORDER_STATUS_UPDATE){
-                    $this->addOrderStatusUpdateNotificationType($mediaUrl,$listDefaultImage);
+                } elseif ($notificationType == NotificationModel::ORDER_STATUS_UPDATE) {
+                    $this->addOrderStatusUpdateNotificationType($mediaUrl, $listDefaultImage);
                     $totalRestore ++;
-                }
-                elseif ($notificationType == NotificationModel::ABANDONED_CART_REMINDS){
-                    $this->addAbandonedCartNotificationType($mediaUrl,$listDefaultImage);
+                } elseif ($notificationType == NotificationModel::ABANDONED_CART_REMINDS) {
+                    $this->addAbandonedCartNotificationType($mediaUrl, $listDefaultImage);
                     $totalRestore ++;
                 }
             }
             $this->messageManager->addSuccessMessage(__('Total of %1 record(s) have been restored.', $totalRestore));
 
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->messageManager->addErrorMessage($exception->getMessage());
         }
         return $resultRedirect->setPath('*/*/');
     }
 
     /**
-     * @param $mediaUrl
-     * @param $listDefaultImage
+     * Add abandoned cart notification type
+     *
+     * @param string $mediaUrl
+     * @param array $listDefaultImage
      * @throws AlreadyExistsException
      */
-    private function addAbandonedCartNotificationType($mediaUrl,$listDefaultImage){
+    private function addAbandonedCartNotificationType($mediaUrl, $listDefaultImage)
+    {
         $data = [
                 'name' => NotificationModel::ABANDONED_CART_REMINDS_LABEL,
                 'description' => NotificationModel::ABANDONED_CART_REMINDS_LABEL,
@@ -137,11 +137,14 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
     }
 
     /**
-     * @param $mediaUrl
-     * @param $listDefaultImage
+     * Add review reminder notification type
+     *
+     * @param string $mediaUrl
+     * @param array $listDefaultImage
      * @throws AlreadyExistsException
      */
-    private function addReviewReminderNotificationType($mediaUrl,$listDefaultImage){
+    private function addReviewReminderNotificationType($mediaUrl, $listDefaultImage)
+    {
         $data = [
                 'name' => NotificationModel::REVIEW_REMINDERS_LABEL,
                 'description' => NotificationModel::REVIEW_REMINDERS_LABEL,
@@ -158,11 +161,14 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
     }
 
     /**
-     * @param $mediaUrl
-     * @param $listDefaultImage
+     * Add order status update notification type
+     *
+     * @param string $mediaUrl
+     * @param array $listDefaultImage
      * @throws AlreadyExistsException
      */
-    private function addOrderStatusUpdateNotificationType($mediaUrl,$listDefaultImage){
+    private function addOrderStatusUpdateNotificationType($mediaUrl, $listDefaultImage)
+    {
         $data = [
                 'name' => NotificationModel::ORDER_STATUS_UPDATE_LABEL,
                 'description' => NotificationModel::ORDER_STATUS_UPDATE_LABEL,
@@ -179,15 +185,20 @@ class RestoreDefaultNotification extends \Magento\Backend\App\Action
     }
 
     /**
-     * @param $data
+     * Save notification type
+     *
+     * @param array $data
      * @throws AlreadyExistsException
      */
-    private function saveNotificationType($data){
+    private function saveNotificationType($data)
+    {
         $model = $this->notificationTypeFactory->create();
         $model->addData($data);
         $this->notificationType->save($model);
     }
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification_type');

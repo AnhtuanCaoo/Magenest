@@ -37,7 +37,7 @@ class Google extends \Magento\Framework\View\Element\Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientGoogle->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'google']);
     }
 
     /**

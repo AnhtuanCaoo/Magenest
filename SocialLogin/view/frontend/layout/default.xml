@@ -6,14 +6,22 @@
     <body>
         <referenceContainer name="content">
             <block class="Magenest\SocialLogin\Block\PopupModal\LoginButton" name="login_button" template="popupmodal/login_button.phtml" />
-        
+
             <block class="Magenest\SocialLogin\Block\PopupModal\ModalContent" name="login_modal" template="popupmodal/modal_content.phtml">
                 <arguments>
+                    <argument name="recaptcha_for" xsi:type="string">customer_login</argument>
                     <argument name="jsLayout" xsi:type="array">
                         <item name="components" xsi:type="array">
                             <item name="modal_content" xsi:type="array">
                                 <item name="component" xsi:type="string">Magenest_SocialLogin/js/view/modal</item>
                                 <item name="displayArea" xsi:type="string">modal_content</item>
+                                <item name="children" xsi:type="array">
+                                    <item name="recaptcha" xsi:type="array">
+                                        <item name="component" xsi:type="string">Magento_ReCaptchaFrontendUi/js/reCaptcha</item>
+                                        <item name="zone" xsi:type="string">custom_form</item>
+                                        <item name="displayArea" xsi:type="string">additional-login-form-fields</item>
+                                    </item>
+                                </item>
                             </item>
                         </item>
                     </argument>

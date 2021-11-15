@@ -4,7 +4,9 @@
 namespace Magenest\NotificationBox\Setup\Patch\Data;
 
 use Magenest\NotificationBox\Helper\Helper;
+use Magento\Framework\Filesystem\Io\File;
 use Magenest\NotificationBox\Model\Notification;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Component\ComponentRegistrarInterface;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -29,7 +31,14 @@ class AddDefaultNotificationType implements DataPatchInterface
      * @var DirectoryList
      */
     protected $dir;
-
+    /**
+     * @var DriverInterface
+     */
+    protected $driverInterface;
+    /**
+     * @var File
+     */
+    protected $file;
     /**
      * @var ComponentRegistrarInterface
      */
@@ -40,25 +49,36 @@ class AddDefaultNotificationType implements DataPatchInterface
     private $moduleDataSetup;
 
     /**
+     * Construct
+     *
      * @param ModuleDataSetupInterface $moduleDataSetup
      * @param Helper $helper
      * @param StoreManagerInterface $storeManagerInterface
      * @param DirectoryList $dir
      * @param ComponentRegistrarInterface $path
+     * @param DriverInterface $driverInterface
+     * @param File $file
      */
     public function __construct(
         ModuleDataSetupInterface $moduleDataSetup,
         Helper $helper,
         StoreManagerInterface $storeManagerInterface,
         DirectoryList $dir,
-        ComponentRegistrarInterface $path
+        ComponentRegistrarInterface $path,
+        DriverInterface $driverInterface,
+        File $file
     ) {
         $this->moduleDataSetup = $moduleDataSetup;
         $this->storeManagerInterface = $storeManagerInterface;
         $this->helper = $helper;
         $this->dir = $dir;
         $this->path = $path;
+        $this->driverInterface = $driverInterface;
+        $this->file = $file;
     }
+    /**
+     * Apply
+     */
     public function apply()
     {
         $this->moduleDataSetup->startSetup();
@@ -67,8 +87,8 @@ class AddDefaultNotificationType implements DataPatchInterface
         $rootPub = $this->dir->getPath('media');
 
         //create and authorize the notificationtype/icon directory
-        if (!file_exists($rootPub .'/'. self::URL_ICON)) {
-            mkdir($rootPub .'/'. self::URL_ICON, 0777, true);
+        if (!$this->file->fileExists($rootPub .'/'. self::URL_ICON)) {
+            $this->driverInterface->createDirectory($rootPub .'/'. self::URL_ICON, 0777, true);
         }
         $filePath = $rootPath . self::URL_ICON_DEFAULT;
         $copyFileFullPath = $rootPub .'/'. self::URL_ICON;
@@ -127,10 +147,16 @@ class AddDefaultNotificationType implements DataPatchInterface
         );
         $this->moduleDataSetup->endSetup();
     }
+    /**
+     * Get aliases
+     */
     public function getAliases()
     {
         return [];
     }
+    /**
+     * Get dependencies
+     */
     public static function getDependencies()
     {
         return [];

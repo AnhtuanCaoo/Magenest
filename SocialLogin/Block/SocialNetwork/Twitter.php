@@ -27,7 +27,7 @@ class Twitter extends \Magento\Framework\View\Element\Template
         \Magenest\SocialLogin\Model\Twitter\Client $clientTwitter,
         \Magento\Customer\Model\Session $customerSession
     ) {
-    
+
         $this->_clientTwitter = $clientTwitter;
         $this->_customerSession = $customerSession;
         parent::__construct($context);
@@ -46,7 +46,7 @@ class Twitter extends \Magento\Framework\View\Element\Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientTwitter->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'twitter']);
     }
 
     /**

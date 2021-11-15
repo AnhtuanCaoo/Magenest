@@ -34,6 +34,8 @@ class RegistrationAction extends Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      */
@@ -44,7 +46,8 @@ class RegistrationAction extends Column
                 $name = $this->getData('name');
                 if (isset($item['entity_id'])) {
                     $item[$name]['delete'] = [
-                        'href' => $this->urlBuilder->getUrl(self::GRID_URL_PATH_DELETE, ['entity_id' => $item['entity_id']]),
+                        'href' => $this->urlBuilder
+                            ->getUrl(self::GRID_URL_PATH_DELETE, ['entity_id' => $item['entity_id']]),
                         'label' => __('Delete'),
                         'confirm' => [
                             'title' => __('Delete'),
@@ -52,7 +55,8 @@ class RegistrationAction extends Column
                         ]
                     ];
                     $item[$name]['unsubscribe'] = [
-                        'href' => $this->urlBuilder->getUrl(self::GRID_URL_PATH_UNSUBSCRIBE, ['entity_id' => $item['entity_id']]),
+                        'href' => $this->urlBuilder
+                            ->getUrl(self::GRID_URL_PATH_UNSUBSCRIBE, ['entity_id' => $item['entity_id']]),
                         'label' => __('Unsubscribe'),
                         'confirm' => [
                             'title' => __('Unsubscribe'),

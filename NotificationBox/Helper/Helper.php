@@ -3,6 +3,8 @@
 namespace Magenest\NotificationBox\Helper;
 
 use Magenest\NotificationBox\Model\CustomerNotificationFactory;
+use Magento\Framework\Filesystem\Io\File;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magenest\NotificationBox\Model\CustomerToken as CustomerTokenModel;
 use Magenest\NotificationBox\Model\CustomerTokenFactory;
 use Magenest\NotificationBox\Model\Notification as NotificationModel;
@@ -17,6 +19,7 @@ use Magenest\NotificationBox\Model\ResourceModel\NotificationType;
 use Magenest\NotificationBox\Model\ResourceModel\NotificationType\Collection as NotificationTypeCollection;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\ResourceModel\Customer;
+use Magento\Framework\HTTP\Client\Curl;
 //use Magento\Customer\Model\ResourceModel\Customer\Collection as CustomerCollection;
 use Magento\Customer\Model\ResourceModel\Group\Collection as CustomerGroup;
 use Magento\Customer\Model\Session;
@@ -29,13 +32,25 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Url\Helper\Data as UrlHelper;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerToken\CollectionFactory;
 use \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollection;
 use \Magento\Framework\App\ResourceConnection;
+use phpDocumentor\Reflection\Types\Null_;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class Helper extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    /** @var Curl*/
+    protected $curl;
+    /**
+     * @var file
+     */
+    protected $file;
+    /**
+     * @var $driverInterface
+     */
+    protected $driverInterface;
     /**
      * @var ScopeConfigInterface
      */
@@ -69,8 +84,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     const PATH_ENABLE_NOTIFICATION_BOX = 'magenest_notification_box/general/enable';
     const PATH_API_KEY = 'magenest_notification_box/general/api_key';
     const PATH_SENDER_ID = 'magenest_notification_box/general/sender_id';
-    const PATH_MAXIMUM_NOTIFICATION_IN_MY_NOTIFICATION_ON_MY_ACCOUNT_PAGE = 'magenest_notification_box/general/maximum_notification_in_my_notifications_on_my_account_page';
-
+    const PATH_MAXIMUM_NOTIFICATION_IN_MY_NOTIFICATION_ON_MY_ACCOUNT_PAGE =
+        'magenest_notification_box/general/maximum_notification_in_my_notifications_on_my_account_page';
 
     //Subscriptions Popup
     const PATH_ALLOW_WEB_PUSH = 'magenest_notification_box/subscription_popup/allow_web_push';
@@ -82,14 +97,18 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     const PATH_MAXIMUM_NOTIFICATION = 'magenest_notification_box/web_push_notification/maximun_notification';
 
     //Notification Box
-    const PATH_MAXIMUM_NOTIFICATION_ON_NOTIFICATION_BOX = 'magenest_notification_box/notification_box/maximum_notification_on_notification_box';
-    const PATH_MAXIMUM_NOTIFICATION_DESCRIPTION = 'magenest_notification_box/notification_box/maximum_notification_description';
-    const PATH_MAXIMUM_NOTIFICATION_ON_MY_NOTIFICATION_PAGE = 'magenest_notification_box/notification_box/maximum_notification_on_my_notification_page';
+    const PATH_MAXIMUM_NOTIFICATION_ON_NOTIFICATION_BOX =
+        'magenest_notification_box/notification_box/maximum_notification_on_notification_box';
+    const PATH_MAXIMUM_NOTIFICATION_DESCRIPTION =
+        'magenest_notification_box/notification_box/maximum_notification_description';
+    const PATH_MAXIMUM_NOTIFICATION_ON_MY_NOTIFICATION_PAGE =
+        'magenest_notification_box/notification_box/maximum_notification_on_my_notification_page';
     const PATH_THEME_COLOR = 'magenest_notification_box/notification_box/theme_color';
     const PATH_UNREAD_NOTIFICATION_COLOR = 'magenest_notification_box/notification_box/color_unread_notification';
     const PATH_BOX_POSITION = 'magenest_notification_box/notification_box/box_position';
     const PATH_BOX_WIDTH = 'magenest_notification_box/notification_box/box_width';
-    const PATH_ALLOW_CUSTOMER_DELETE_NOTIFICATION = 'magenest_notification_box/notification_box/allow_customer_delete_notification';
+    const PATH_ALLOW_CUSTOMER_DELETE_NOTIFICATION =
+        'magenest_notification_box/notification_box/allow_customer_delete_notification';
 
     //Default Image
     const PATH_DEFAULT_IMAGE_ORDER_STATUS_UPDATE = 'magenest_notification_box/default_image/order_status_update';
@@ -138,7 +157,7 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var Repository */
     private $repository;
 
-    /** @var LoggerInterface  */
+    /** @var Logger  */
     protected $logger;
 
     /** @var CustomerGroup  */
@@ -171,6 +190,7 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Data constructor.
+     *
      * @param Json $json
      * @param Context $context
      * @param UrlHelper $urlHelper
@@ -192,11 +212,14 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
      * @param NotificationFactory $notificationFactory
      * @param Notification $notificationResource
      * @param Repository $repository
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      * @param CustomerGroup $customerGroup
      * @param CollectionFactory $collectionFactory
      * @param ResourceConnection $resource
      * @param PublisherInterface $publisher
+     * @param DriverInterface $driverInterface
+     * @param File $file
+     * @param Curl $curl
      */
     public function __construct(
         Json $json,
@@ -220,11 +243,14 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         NotificationFactory $notificationFactory,
         Notification $notificationResource,
         Repository $repository,
-        LoggerInterface $logger,
+        Logger $logger,
         CustomerGroup $customerGroup,
         CollectionFactory $collectionFactory,
         ResourceConnection $resource,
-        PublisherInterface $publisher
+        PublisherInterface $publisher,
+        DriverInterface $driverInterface,
+        File $file,
+        Curl $curl
     ) {
         $this->publisher = $publisher;
         $this->connection = $resource->getConnection();
@@ -253,53 +279,72 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         $this->scopeConfig = $context->getScopeConfig();
         $this->urlHelper = $urlHelper;
         $this->formKey = $formKey;
+        $this->driverInterface = $driverInterface;
+        $this->file = $file;
+        $this->curl = $curl;
         parent::__construct($context);
     }
 
     //get config value by path
+
+    /**
+     * Get config
+     *
+     * @param string $path
+     * @return mixed
+     */
     protected function getConfig($path)
     {
         return $this->scopeConfig->getValue($path);
     }
 
     /**
+     * Get enabled module
+     *
      * @return mixed
      */
     public function getEnableModule()
     {
         return $this->getConfig(self::PATH_ENABLE_NOTIFICATION_BOX);
     }
-
     /**
+     * Get api key
+     *
      * @return mixed
      */
     public function getApiKey()
     {
         return $this->getConfig(self::PATH_API_KEY);
     }
-
     /**
+     * Get sender id
+     *
      * @return mixed
      */
     public function getSenderId()
     {
         return $this->getConfig(self::PATH_SENDER_ID);
     }
-
     /**
+     * Get allow web push
+     *
      * @return mixed
      */
     public function getAllowWebPush()
     {
         return $this->getConfig(self::PATH_ALLOW_WEB_PUSH);
     }
-
+    /**
+     * Get content popup
+     */
     public function getContentPopup()
     {
         return $this->getConfig(self::PATH_CONTENT_POPUP);
     }
 
     /**
+     * Get time show popup
+     *
      * @return mixed
      */
     public function getTimeShowPopup()
@@ -308,6 +353,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get time resend popup
+     *
      * @return mixed
      */
     public function getTimeResendPopUp()
@@ -316,6 +363,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get maximum notification
+     *
      * @return mixed
      */
     public function getMaximumNotification()
@@ -324,6 +373,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get maximum notification description
+     *
      * @return mixed
      */
     public function getMaximumNotificationDescription()
@@ -332,6 +383,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get maximum notification on my notification page
+     *
      * @return mixed
      */
     public function getMaximumNotificationOnMyNotificationPage()
@@ -340,6 +393,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get maximum notification on notification box
+     *
      * @return mixed
      */
     public function getMaximumNotificationOnNotificationBox()
@@ -348,6 +403,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get maximum notification in my notification on my account page
+     *
      * @return mixed
      */
     public function getMaximumNotificationInMyNotificationOnMyAccountPage()
@@ -356,19 +413,25 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get theme color
+     *
      * @return mixed
      */
     public function getThemeColor()
     {
         return $this->getConfig(self::PATH_THEME_COLOR);
     }
-
+    /**
+     * Get unread notification
+     */
     public function getUnreadNotification()
     {
         return $this->getConfig(self::PATH_UNREAD_NOTIFICATION_COLOR);
     }
 
     /**
+     * Get box position
+     *
      * @return mixed
      */
     public function getBoxPosition()
@@ -377,6 +440,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get box width
+     *
      * @return mixed
      */
     public function getBoxWidth()
@@ -385,6 +450,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get allow customer delete notification
+     *
      * @return mixed
      */
     public function getAllowCustomerDeleteNotification()
@@ -393,6 +460,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get default image order status update
+     *
      * @return mixed
      */
     public function getDefaultImageOrderStatusUpdate()
@@ -401,6 +470,8 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get default image review reminder
+     *
      * @return mixed
      */
     public function getDefaultImageReviewReminder()
@@ -409,13 +480,17 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get default image abandoned cart
+     *
      * @return mixed
      */
     public function getDefaultImageAbandonedCart()
     {
         return $this->getConfig(self::PATH_DEFAULT_IMAGE_ABANDONED_CART);
     }
-
+    /**
+     * Get customer notification
+     */
     public function getCustomerNotification()
     {
         $customerId = $this->getCustomerId();
@@ -427,13 +502,17 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         return null;
     }
 
-    /** get customer Id */
+    /**
+     * Get customer id
+     */
     public function getCustomerId()
     {
         $customer = $this->customerSession;
         return $customer ? $customer->getId() : null;
     }
-
+    /**
+     * Get customer name
+     */
     public function getCustomerName()
     {
         $customer = $this->customerSession;
@@ -441,17 +520,27 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     //get all customer
+    /**
+     * Get all customer
+     */
     public function getAllCustomer()
     {
         return $this->customerCollection;
     }
-
+    /**
+     * Get base url
+     */
     public function getBaseUrl()
     {
         return $this->getBaseUrl();
     }
 
     //send notification in magento
+    /**
+     * Send notification in magento
+     *
+     * @param array $notification
+     */
     public function sendNotificationInMagento($notification)
     {
         $currentPage = 1;
@@ -460,7 +549,7 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         $tableName = $this->resource->getTableName('magenest_customer_notification');
         $listCustomerGroup = $this->json->unserialize($notification['customer_group']);
         $listStore = $this->json->unserialize($notification['store_view']);
-        while ($currentPage <= $totalPage){
+        while ($currentPage <= $totalPage) {
             $data = [];
             $allCustomerClone = clone $allCustomer;
             $CustomerPart = $allCustomerClone->setCurPage($currentPage)->getData();
@@ -491,20 +580,28 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * handle notification data before save
-     * @param $data
+     * Handle notification data before save
+     *
+     * @param object $data
      * @return mixed
      */
-    public function unsetDataBeforeSave($data){
-        foreach ($data as $key=>$value){
-            if(!in_array($key,$this->customerNotificationColumns)){
+    public function unsetDataBeforeSave($data)
+    {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $this->customerNotificationColumns)) {
                 unset($data[$key]);
             }
         }
         return $data;
     }
-
+    // @codingStandardsIgnoreStart
     //send notification via firebase
+    /**
+     * Send notification with fire base
+     *
+     * @param array $notification
+     * @param string|null $token
+     */
     public function sendNotificationWithFireBase($notification, $token = null)
     {
         $allCustomerToken = [];
@@ -518,9 +615,10 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             } else {
                 //send to all token
-                $allCustomerToken = $this->customerTokenCollection->addFieldToFilter('status', CustomerTokenModel::STATUS_SUBSCRIBED)
+                $allCustomerToken = $this->customerTokenCollection
+                    ->addFieldToFilter('status', CustomerTokenModel::STATUS_SUBSCRIBED)
                     ->addFieldToFilter('is_active', CustomerTokenModel::IS_ACTIVE);
-                if(!in_array('0', $listStore)){
+                if (!in_array('0', $listStore)) {
                     $allCustomerToken->addFieldToFilter('store_id', ['in'=> $listStore]);
                 }
                 $allCustomerToken = $allCustomerToken->getData();
@@ -549,15 +647,15 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
                             if (!in_array($customerGroupId, $listCustomerGroup)) {
                                 continue;
                             }
-                        }
-                        //guest token
-                        else {
+                        } else {
                             if (!in_array('0', $listCustomerGroup)) {
                                 continue;
                             }
                         }
                         $urlImage = $this->getImageByNotificationType($notification);
-                        $baseUrl = $this->storeManagerInterface->getStore()->getBaseUrl() . "notibox/handleNotification/clickToNotification?notificationId=" . $notification['id'] . "&url=";
+                        $baseUrl = $this->storeManagerInterface->getStore()
+                                ->getBaseUrl() . "notibox/handleNotification/clickToNotification?notificationId="
+                                                . $notification['id'] . "&url=";
                         $url = isset($notification['redirect_url']) ? $notification['redirect_url'] : "";
                         $data = [
                             "notification" => [
@@ -585,12 +683,30 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
             $this->logger->error('There was an error sending notifications via firebase :' . $exception->getMessage());
         }
     }
-
+    // @codingStandardsIgnoreEnd
     //send notification via firebase
+
+    /**
+     * Send notification
+     *
+     * @param string $data_string
+     * @param string $token
+     * @param string $notificationId
+     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     */
     public function sendNotification($data_string, $token, $notificationId)
     {
         $serverKey = $this->getApiKey();
         $headers = ['Authorization: key=' . $serverKey, 'Content-Type: application/json'];
+//        $url = $this->storeManagerInterface->getStore()->getBaseUrl();
+//        $this->curl->setOption(CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+//        $this->curl->setOption(CURLOPT_POST, true);
+//        $this->curl->addHeader('Content-Type', 'application/json');
+//        $this->curl->addHeader('Authorization: key', $serverKey);
+//        $this->curl->setOption(CURLOPT_RETURNTRANSFER, true);
+//        $this->curl->setOption(CURLOPT_POSTFIELDS, $data_string);
+//        $this->curl->post($url, []);
+//        $response = $this->curl->getBody();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
         curl_setopt($ch, CURLOPT_POST, true);
@@ -598,6 +714,7 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         $response = curl_exec($ch);
+
         try {
             $response = $this->json->unserialize($response);
         } catch (\Exception $exception) {
@@ -623,7 +740,9 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param $token
+     * Get token data by token
+     *
+     * @param string $token
      * @return CustomerTokenModel
      */
     public function getTokenDataByToken($token)
@@ -634,7 +753,9 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param $condition
+     * Get all notification by condition
+     *
+     * @param string $condition
      * @return NotificationCollection
      */
     public function getAllNotificationByCondition($condition)
@@ -643,7 +764,9 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param $notification
+     * Get image by notification type
+     *
+     * @param array $notification
      * @return mixed|string
      */
     public function getImageByNotificationType($notification)
@@ -670,17 +793,20 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param $notificationId
+     * Get notification name by id
+     *
+     * @param string $notificationId
      * @return mixed
      */
-    public function getNotificationNameById($notificationId){
+    public function getNotificationNameById($notificationId)
+    {
         $notificationModel = $this->notificationFactory->create();
-        $this->notificationResource->load($notificationModel,$notificationId);
+        $this->notificationResource->load($notificationModel, $notificationId);
         return $notificationModel->getName();
     }
 
     /**
-     * get default notification type image
+     * Get default notification type image
      */
     public function getDefaultImage()
     {
@@ -692,29 +818,32 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * get customer group
+     * Get customer group
      */
     public function getCustomerGroups()
     {
         return $this->customerGroup->toOptionArray();
     }
-
+// @codingStandardsIgnoreStart
     /**
-     * @param $src
-     * @param $dst
+     * Copy directory
+     *
+     * @param string $src
+     * @param string $dst
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function copyDirectory($src, $dst)
     {
         $dir = opendir($src);
-        if (!file_exists($dst)) {
-            mkdir($dst);
+        if (!$this->file->fileExists($dst)) {
+            $this->driverInterface->createDirectory($dst);
         }
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
+                if ($this->driverInterface->isDirectory($src . '/' . $file)) {
                     recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
+                    $this->driverInterface->copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }
         }
@@ -722,9 +851,11 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * find the firebase-messaging-sw.js file and copy to root folder
-     * @param $src
-     * @param $dst
+     * Find the firebase-messaging-sw.js file and copy to root folder
+     *
+     * @param string $src
+     * @param string $dst
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function copyFile($src, $dst)
     {
@@ -733,7 +864,7 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
         //find the firebase-messaging-sw.js file and copy to root folder
         while (false !== ($file = readdir($dir))) {
             if ($file == 'firebase-messaging-sw.js') {
-                copy($src . '/' . $file, $dst . '/' . $file);
+                $this->driverInterface->copy($src . '/' . $file, $dst . '/' . $file);
                 break;
             }
         }
@@ -741,32 +872,39 @@ class Helper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param $notification
+     * Get token
+     *
+     * @param array $notification
      * @return CustomerTokenCollection
      */
     public function getToken($notification)
     {
-        return $this->collectionFactory->create()->addFieldToFilter('customer_id',$notification['customer_id'])
+        return $this->collectionFactory->create()->addFieldToFilter('customer_id', $notification['customer_id'])
                         ->addFieldToFilter('is_active', CustomerTokenModel::IS_ACTIVE);
     }
 
-    /** get default notification image when notification type image not exist*/
+    /**
+     * Get default notification image when notification type image not exist
+     */
     public function getImageDefault()
     {
         $currentStore = $this->storeManagerInterface->getStore();
-        return $mediaUrl = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . self::URL_ICON_DEFAULT;
+        return $mediaUrl = $currentStore
+                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . self::URL_ICON_DEFAULT;
     }
 
     /**
      * Get total number of notifications sent for 1 token
-     * @param $token
+     *
+     * @param array $token
      * @return int
      */
-    public function getLimitNotification($token){
+    public function getLimitNotification($token)
+    {
         $total = 0;
-        $customerToken = $this->collectionFactory->create()->addFieldToFilter('guest_id',$token['guest_id'])
-            ->addFieldToFilter('token',$token['token']);
-        foreach ($customerToken as $token){
+        $customerToken = $this->collectionFactory->create()->addFieldToFilter('guest_id', $token['guest_id'])
+            ->addFieldToFilter('token', $token['token']);
+        foreach ($customerToken as $token) {
             $total += $token['limit'];
         }
         return $total;

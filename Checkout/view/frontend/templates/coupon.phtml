@@ -1,0 +1,92 @@
+<?php
+    $coupon = $block->getCoupon();
+    $today = $block->getToday();
+    if(!empty($coupon)) {
+        foreach ($coupon as $value) {
+            if($today < strtotime($value->getData('to_date')) || $value->getData('to_date') == null) {
+                $images = $value->getData('images'); ?>
+                <div id="coupon_magenest">
+                    <div id="container_coupon">
+                        <div style="width: 105px; height: 105px">
+                            <img src="<?php
+                            if(!empty($images)){
+                                echo $images[0]['url'];
+                            }
+                            ?>" alt="coupon" width="100px" height="100px"/>
+                        </div>
+                        <div id="information_coupon" >
+                            <strong><?php echo $value->getData('code') ?></strong>
+                            <div>Name: <?php echo $value->getData('name') ?></div>
+                            <div><?php echo $value->getData('description') ?></div>
+                            <div>Usage limit: <?php echo $value->getData('usage_limit') ?></div>
+                            <div>Exp: <?php echo $value->getData('to_date') ?></div>
+                        </div>
+                        <button <?php if($block->getCurrentCustomer() == 0){
+                            echo 'onclick="needlogin()"';
+                        }else{
+                            echo ('id="'.$value->getData('code').'"');
+                        }?> class="claim">Claim</button>
+                    </div>
+                </div>
+            <?php } ?>
+            <script type="text/javascript">
+                require(["jquery", "mage/url"],function($, urlBuilder) {
+                    $(document).ready(function() {
+                        $('#<?php echo $value->getData('code') ?>').click(function(){
+                            var url = urlBuilder.build('coupon/coupon/claim');
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                dataType: 'json',
+                                data: {
+                                    rule_id: <?php echo $value->getData('rule_id') ?>,
+                                    customer_id: <?php echo $block->getUserId()?>,
+                                    coupon_id: <?php echo $value->getData('coupon_id') ?>
+                                },
+                                success: function(response) {
+                                    console.log(response);
+                                },
+                                error: function (xhr, status, errorThrown) {
+                                    console.log('Error happens. Try again.');
+                                }
+                            });
+                        });
+                    });
+                });
+            </script>
+        <?php }
+        }?>
+
+
+
+<script type="text/javascript">
+        function needlogin(){
+            alert('Please login to claim coupon');
+        }
+</script>
+
+<style>
+    .claim{
+        height: 30px;
+    }
+    #coupon_magenest{
+        border: 1px solid black;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 10px;
+        background-color: white;
+        width: 500px;
+        height: 100px;
+        display: block;
+        float: left;
+        margin: 10px;
+
+    }
+    #container_coupon{
+        display: flex;
+    }
+    #information_coupon{
+        width: 300px;
+        padding-left: 10px;
+    }
+</style>

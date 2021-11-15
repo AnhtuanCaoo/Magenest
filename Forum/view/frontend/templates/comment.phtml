@@ -1,0 +1,41 @@
+<div id="container-box">
+    <hr>
+    <form>
+        <div id="post-comments">
+            <textarea id="comment-box" name="text" placeholder="Add a comment..." data-validate="{required:true}"></textarea>
+        </div>
+        <button style="margin-top: 10px; background-color: #2b7dbd" type="submit">Submit</button>
+    </form>
+    <hr>
+</div>
+<?php
+$comment = $block->getComment();
+foreach($comment as $item){ ?>
+    <div id="container-box">
+        <div style="display: flex">
+            <strong><?= $block->escapeHtml($item->getData('firstname').' ') ?><?= $block->escapeHtml($item->getData('lastname')) ?></strong>
+            <div style="padding-left: 5px; color:gray"><?php echo $block->handleDate($item->getData('created_at')) ?></div>
+        </div>
+        <div><?php echo $item->getData('email') ?></div>
+        <div style="padding-top: 15px"><?php echo $item->getData('message') ?></div>
+        <hr>
+    </div>
+
+
+
+
+<?php } ?>
+<style>
+    #container-box{
+        width: 130%;
+    }
+    #post-comments{
+        box-sizing: border-box;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    #comment-box{
+        padding: 8px;
+        height: 70px;
+        border: 1px solid #bbbbbb;
+    }
+</style>

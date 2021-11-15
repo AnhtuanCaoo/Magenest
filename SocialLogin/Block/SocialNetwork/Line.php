@@ -37,7 +37,7 @@ class Line extends \Magento\Framework\View\Element\Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientLine->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'line']);
     }
 
     /**

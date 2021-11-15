@@ -18,7 +18,7 @@ use Magenest\NotificationBox\Model\ResourceModel\CustomerToken;
 
 /**
  * Class GetReport
- * @package Magenest\InstagramShop\Controller\Adminhtml\Report
+ * Magenest\InstagramShop\Controller\Adminhtml\Report
  */
 class GetReport extends \Magento\Backend\App\Action
 {
@@ -27,7 +27,6 @@ class GetReport extends \Magento\Backend\App\Action
 
     /** @var Json */
     protected $serialize;
-
 
     /** @var Helper */
     protected $helper;
@@ -58,8 +57,7 @@ class GetReport extends \Magento\Backend\App\Action
         JsonFactory $resultJsonFactory,
         CustomerToken $customerToken,
         CustomerTokenFactory $customerTokenFactory
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
         $this->serialize = $serialize;
@@ -91,30 +89,31 @@ class GetReport extends \Magento\Backend\App\Action
         $interval = DateInterval::createFromDateString('1 day');
         $period = new DatePeriod($begin, $interval, $end);
         $connection = $this->collection->getConnection();
-        $allToken = $this->collection->addFieldToFilter('created_at', array('gteq' => $from))
-            ->addFieldToFilter('created_at', array('lteq' => $to))
+        $allToken = $this->collection->addFieldToFilter('created_at', ['gteq' => $from])
+            ->addFieldToFilter('created_at', ['lteq' => $to])
             ->getSelect()
             ->columns('COUNT(created_at) as total')
             ->group('created_at');
         $allToken = $connection->fetchAll($allToken);
-        foreach ($allToken as $token){
+        foreach ($allToken as $token) {
             $listDayHaveToken[]=$token['created_at'];
             $dataReport[] = ['day' => $token['created_at'], 'total' =>(int)$token['total']];
         }
         foreach ($period as $dt) {
             $day = $dt->format('Y-m-d');
-            if(!in_array($day,$listDayHaveToken)){
+            if (!in_array($day, $listDayHaveToken)) {
                 $data []= [ 'day'=>$day,'total'=> 0];
-            }
-            else{
-                $index = array_search($day,$listDayHaveToken);
+            } else {
+                $index = array_search($day, $listDayHaveToken);
                 $data []= [ 'day'=>$day,'total'=> $dataReport[$index]['total']];
             }
         }
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         return $resultJson->setData($data);
     }
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::report');

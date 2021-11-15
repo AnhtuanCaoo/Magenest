@@ -3,13 +3,23 @@
 namespace Magenest\SocialLogin\Block\PopupModal;
 
 use Magento\Framework\View\Element\Template;
-
+use Magento\ReCaptchaUi\Model\UiConfigResolverInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 /**
  * Class ModalContent
  * @package Magenest\SocialLogin\Block\PopupModal
  */
 class ModalContent extends Template
 {
+    CONST RECAPTCHA_CONFIG = 'recaptcha_frontend/type_for/customer_login';
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+    /**
+     * @var UiConfigResolverInterface
+     */
+    protected $captchaUiConfigResolver;
     /**
      * @var array|\Magento\Checkout\Block\Checkout\LayoutProcessorInterface[]
      */
@@ -67,19 +77,22 @@ class ModalContent extends Template
      * ModalContent constructor.
      *
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magenest\SocialLogin\Model\Twitter\Client       $clientTwitter
-     * @param \Magenest\SocialLogin\Model\Facebook\Client      $clientFacebook
-     * @param \Magenest\SocialLogin\Model\Google\Client        $clientGoogle
-     * @param \Magenest\SocialLogin\Model\Amazon\Client        $clientAmazon
-     * @param \Magenest\SocialLogin\Model\Instagram\Client     $clientInstagram
-     * @param \Magenest\SocialLogin\Model\Reddit\Client        $clientReddit
-     * @param \Magenest\SocialLogin\Model\Line\Client          $clientLine
-     * @param \Magenest\SocialLogin\Model\Pinterest\Client     $clientPinterest
-     * @param \Magenest\SocialLogin\Model\Linkedin\Client      $clientLinkedIn
-     * @param \Magenest\SocialLogin\Model\Zalo\Client          $clientZalo
-     * @param \Magenest\SocialLogin\Helper\SocialLogin         $socialLogin
-     * @param array                                            $layoutProcessors
-     * @param array                                            $data
+     * @param \Magenest\SocialLogin\Model\Twitter\Client $clientTwitter
+     * @param \Magenest\SocialLogin\Model\Facebook\Client $clientFacebook
+     * @param \Magenest\SocialLogin\Model\Google\Client $clientGoogle
+     * @param \Magenest\SocialLogin\Model\Amazon\Client $clientAmazon
+     * @param \Magenest\SocialLogin\Model\Instagram\Client $clientInstagram
+     * @param \Magenest\SocialLogin\Model\Reddit\Client $clientReddit
+     * @param \Magenest\SocialLogin\Model\Line\Client $clientLine
+     * @param \Magenest\SocialLogin\Model\Pinterest\Client $clientPinterest
+     * @param \Magenest\SocialLogin\Model\Linkedin\Client $clientLinkedIn
+     * @param \Magenest\SocialLogin\Model\Zalo\Client $clientZalo
+     * @param \Magenest\SocialLogin\Model\Apple\Client $clientApple
+     * @param \Magenest\SocialLogin\Helper\SocialLogin $socialLogin
+     * @param UiConfigResolverInterface $captchaUiConfigResolver
+     * @param SerializerInterface $serializer
+     * @param array $layoutProcessors
+     * @param array $data
      */
     public function __construct(
         Template\Context $context,
@@ -95,6 +108,8 @@ class ModalContent extends Template
         \Magenest\SocialLogin\Model\Zalo\Client $clientZalo,
         \Magenest\SocialLogin\Model\Apple\Client $clientApple,
         \Magenest\SocialLogin\Helper\SocialLogin $socialLogin,
+        UiConfigResolverInterface $captchaUiConfigResolver,
+        SerializerInterface $serializer,
         array $layoutProcessors = [],
         array $data = []
     ) {
@@ -113,13 +128,41 @@ class ModalContent extends Template
         $this->_clientZalo      = $clientZalo;
         $this->_clientApple     = $clientApple;
         $this->_sociallogin     = $socialLogin;
+        $this->captchaUiConfigResolver = $captchaUiConfigResolver;
+        $this->serializer = $serializer;
     }
 
     /**
      * @return string
+     * @throws \Magento\Framework\Exception\InputException
      */
     public function getJsLayout()
     {
+        if($this->_scopeConfig->getValue(ModalContent::RECAPTCHA_CONFIG) != null){
+            $key = 'recaptcha-' . sha1($this->getNameInLayout());
+            $config_key = $this->getData('recaptcha_for');
+            $uiConfig = $this->captchaUiConfigResolver->get($config_key);
+
+            $layout = $this->serializer->unserialize(parent::getJsLayout());
+            if (isset($layout['components']['modal_content']['children']['recaptcha'])) {
+                $layout['components']['modal_content']['children'][$key]
+                    = $layout['components']['modal_content']['children']['recaptcha'];
+                unset($layout['components']['modal_content']['children']['recaptcha']);
+            }
+            $layout['components']['modal_content']['children'][$key] = array_replace_recursive(
+                [
+                    'settings' => $uiConfig,
+                ],
+                $layout['components']['modal_content']['children'][$key]
+            );
+            $layout['components']['modal_content']['children'][$key]['reCaptchaId'] = $key;
+            $this->jsLayout = $layout;
+        }else{
+            $jsLayout = $this->jsLayout;
+            $jsLayout['components']['modal_content']['children'] = [];
+            $this->jsLayout = $jsLayout;
+            $this->setData('jsLayout', []);
+        }
         foreach ($this->layoutProcessors as $processor) {
             $this->jsLayout = $processor->process($this->jsLayout);
         }

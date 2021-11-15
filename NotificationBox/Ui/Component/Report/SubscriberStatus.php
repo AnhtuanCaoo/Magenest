@@ -10,11 +10,14 @@ use Magenest\NotificationBox\Model\CustomerToken;
  */
 class SubscriberStatus implements OptionSourceInterface
 {
-    public static function getOptionArray()
+    /**
+     * Get option array
+     */
+    protected function getOptionArray()
     {
         return [
-            CustomerToken::STATUS_SUBSCRIBED=> __(CustomerToken::STATUS_SUBSCRIBED_LABEL),
-            CustomerToken::STATUS_UNSUBSCRIBED => __(CustomerToken::STATUS_UNSUBSCRIBED_LABEL)
+            CustomerToken::STATUS_SUBSCRIBED => __('Subscribed'),
+            CustomerToken::STATUS_UNSUBSCRIBED => __('Unsubscribed')
         ];
     }
 

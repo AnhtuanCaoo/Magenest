@@ -8,7 +8,7 @@ use Magenest\NotificationBox\Model\CustomerNotification as CustomerNotificationM
 use Magenest\NotificationBox\Model\CustomerNotificationFactory;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification\CollectionFactory;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 
 class HandleNotification implements HandleNotificationInterface
 {
@@ -24,15 +24,17 @@ class HandleNotification implements HandleNotificationInterface
     /** @var CollectionFactory */
     public $notificationCollection;
 
-    /** @var LoggerInterface  */
+    /** @var Logger  */
     public $logger;
 
     /**
+     * Construct
+     *
      * @param Helper $helper
      * @param CustomerNotificationFactory $notificationFactory
      * @param CustomerNotification $notificationResource
      * @param CollectionFactory $notificationCollection
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         Helper $helper,
@@ -40,8 +42,8 @@ class HandleNotification implements HandleNotificationInterface
         $notificationFactory,
         CustomerNotification $notificationResource,
         CollectionFactory $notificationCollection,
-        LoggerInterface $logger)
-    {
+        Logger $logger
+    ) {
         $this->logger = $logger;
         $this->helper = $helper;
         $this->notificationModel = $notificationFactory;
@@ -49,30 +51,30 @@ class HandleNotification implements HandleNotificationInterface
         $this->notificationCollection = $notificationCollection;
     }
 
-    /** delete notifications
+    /**
+     * Delete notifications
+     *
      * @param int $customerId
      * @param string $notificationId
      * @return array
      */
-    public function deleteNotifications($customerId,$notificationId)
+    public function deleteNotifications($customerId, $notificationId)
     {
         $data = [];
-        if($notificationId=="" && strtolower($notificationId)!="all"){
+        if ($notificationId=="" && strtolower($notificationId)!="all") {
             $data[] = [
                 'status'=>false,
                 'message'=>__('Invalid notification id(s)')
             ];
-        }
-        else{
-            $notificationCollection = $this->getCollection($customerId,$notificationId);
-            if($notificationCollection->getSize() == 0){
+        } else {
+            $notificationCollection = $this->getCollection($customerId, $notificationId);
+            if ($notificationCollection->getSize() == 0) {
                 $data[] = [
                     'status'=>false,
                     'message'=>__('Notification(s) cannot be found according to the input condition')
                 ];
-            }
-            else{
-                foreach ($notificationCollection as $notification){
+            } else {
+                foreach ($notificationCollection as $notification) {
                     try {
                         $this->notificationResource->delete($notification);
                     } catch (\Exception $exception) {
@@ -92,52 +94,57 @@ class HandleNotification implements HandleNotificationInterface
         return $data;
     }
 
-    /** mark as read notifications
+    /**
+     * Mark as read notifications
+     *
      * @param int $customerId
      * @param string $notificationId
      * @return array
      */
-    public function markAsRead($customerId,$notificationId){
-        return $this->updateNotification($customerId,$notificationId,'status',1);
+    public function markAsRead($customerId, $notificationId)
+    {
+        return $this->updateNotification($customerId, $notificationId, 'status', 1);
     }
-
-    /** mark important notifications
-     * @param int $status
-     * @param int $customerId
-     * @param string $notificationId
-     * @return array
-     */
-    public function markImportant($customerId,$notificationId,$status){
-        return $this->updateNotification($customerId,$notificationId,'star',$status);
-    }
-
 
     /**
-     * update notification
-     * @param $customerId
-     * @param $notificationId
-     * @param $status
-     * @param $column
-     * @return array
+     * Mark important notifications
+     *
+     * @param string $customerId
+     * @param string $notificationId
+     * @param int $status
      */
-    public function updateNotification($customerId,$notificationId,$column,$status){
+    public function markImportant($customerId, $notificationId, $status)
+    {
+        return $this->updateNotification($customerId, $notificationId, 'star', $status);
+    }
+
+    /**
+     * Update notification
+     *
+     * @param string $customerId
+     * @param string $notificationId
+     * @param string $column
+     * @param int $status
+     */
+    public function updateNotification($customerId, $notificationId, $column, $status)
+    {
         $data = [];
-        if($notificationId==""){
+        if ($notificationId=="") {
             $data[] = [
                 'status'=>false,
                 'message'=>__('Notification(s) cannot be found according to the input condition')
             ];
-        }else{
+        } else {
             try {
-                $notificationCollection = $this->getCollection($customerId,$notificationId);
-                if(count($notificationCollection) == 0){
+                $notificationCollection = $this->getCollection($customerId, $notificationId);
+                if (count($notificationCollection) == 0) {
                     $data[] = [
                         'status'=>false,
                         'message'=>__('Notification(s) cannot be found according to the input condition')
                     ];
-                }else{
+                } else {
                     foreach ($notificationCollection as $item) {
-                        $item->setData($column,$status);
+                        $item->setData($column, $status);
                         $this->notificationResource->save($item);
                     }
                     $data[] = [
@@ -146,8 +153,7 @@ class HandleNotification implements HandleNotificationInterface
                     ];
                 }
 
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 $this->logger->error($exception->getMessage());
                 return  [
                     ['status'=>false,
@@ -159,16 +165,18 @@ class HandleNotification implements HandleNotificationInterface
     }
 
     /**
-     * get collection by condition
-     * @param $customerId
-     * @param $notificationId
+     * Get collection by condition
+     *
+     * @param string $customerId
+     * @param string $notificationId
      * @return array|CustomerNotification\Collection
      */
-    public function getCollection($customerId,$notificationId){
-        $notificationCollection = $this->notificationCollection->create()->addFieldToFilter('customer_id',$customerId);
-        if($notificationId ==""){
+    public function getCollection($customerId, $notificationId)
+    {
+        $notificationCollection = $this->notificationCollection->create()->addFieldToFilter('customer_id', $customerId);
+        if ($notificationId =="") {
             return [];
-        }else {
+        } else {
             $notificationId = strtolower($notificationId);
             if ($notificationId != "all") {
                 $listNotificationId = explode(',', $notificationId);

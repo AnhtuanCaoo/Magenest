@@ -2,23 +2,34 @@
 
 namespace Magenest\SocialLogin\Controller;
 
+use Exception;
+use Magenest\SocialLogin\Helper\SocialLogin;
+use Magento\Customer\Model\Session;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Exception\EmailNotConfirmedException;
 
 /**
  * Class AbstractConnect
  * @package Magenest\SocialLogin\Controller
  */
-abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
+abstract class AbstractConnect extends Action
 {
+    /**
+     * XML Path for enable confirmation required
+     */
+    const XML_PATH_ENABLE_CONFIRMATION_REQUIRED = 'magenest/credentials/%s/is_confirmation_required';
 
     /**
-     * @var \Magenest\SocialLogin\Helper\SocialLogin
+     * @var SocialLogin
      */
     protected $_helper;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $_customerSession;
 
@@ -48,23 +59,23 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
     protected $sessionManager;
 
     /**
-     * @var \Magento\Framework\Session\SessionManagerInterface
+     * @var SessionManagerInterface
      */
     protected $socialSession;
 
     /**
      * AbstractConnect constructor.
-     * @param \Magento\Framework\Session\SessionManagerInterface $socialSession
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Magenest\SocialLogin\Helper\SocialLogin $helper
-     * @param \Magento\Framework\Session\SessionManagerInterface $sessionManager
+     * @param SessionManagerInterface $socialSession
+     * @param Context $context
+     * @param Session $customerSession
+     * @param SocialLogin $helper
+     * @param SessionManagerInterface $sessionManager
      */
     public function __construct(
-        \Magento\Framework\Session\SessionManagerInterface $socialSession,
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magenest\SocialLogin\Helper\SocialLogin $helper,
+        SessionManagerInterface $socialSession,
+        Context                 $context,
+        Session                 $customerSession,
+        SocialLogin             $helper,
         SessionManagerInterface $sessionManager
     ) {
         $this->socialSession = $socialSession;
@@ -75,13 +86,13 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @return Redirect
      */
     public function execute()
     {
         try {
             $this->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->_exeptionMessage = $e->getMessage();
             $this->messageManager->addErrorMessage($e->getMessage());
         }
@@ -92,7 +103,7 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
 
     /**
      * @throws LocalizedException
-     * @throws \Exception
+     * @throws Exception
      */
     public function connect()
     {
@@ -100,6 +111,7 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
         $code = $this->getRequest()->getParam('code') ?? $this->getRequest()->getParam('oauth_token');
         $state = $this->getRequest()->getParam('state');
         $accessToken = $this->getRequest()->getParam('access_token');
+
 
         if (!(isset($error) || isset($code)) && !isset($state)) {
             throw new LocalizedException(__('Something went wrong, please try again later'));
@@ -133,11 +145,20 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
 
                 // normal login
                 if ($customer->getId()) {
-                    if($this->_type == "apple" && !isset($userInfo['is_private_email'])){
+                    if ($this->_type == "apple" && !isset($userInfo['is_private_email'])) {
                         if ($userInfo['email'] != $customer->getEmail() && isset($userInfo['email_verified'])) {
                             $customer->setEmail($userInfo['email']);
                             $customer->save();
                         }
+                    }
+
+                    if (
+                        $this->_helper->checkConditionConfirmationForSocialLoginFromSecondTime(
+                            sprintf(self::XML_PATH_ENABLE_CONFIRMATION_REQUIRED, $this->_type),
+                            $customer
+                        )
+                    ) {
+                        throw new EmailNotConfirmedException(__("You must confirm your account. Please check your email for the confirmation link."));
                     }
 
                     $this->_customerSession->setCustomerAsLoggedIn($customer);
@@ -150,10 +171,14 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
                  * If don't exist customer, create new customer with this information
                  *
                  */
-                $userInfo['email'] =  $userInfo['email'] ?? $this->generateEmail($userInfo['name']);
+                $userInfo['email'] = $userInfo['email'] ?? $this->generateEmail($userInfo['name']);
                 $data = $this->getDataNeedSave($userInfo);
                 $this->beforeCreateCustomer($data);
-                $this->_helper->creatingAccount($data);
+                $customer = $this->_helper->creatingAccount(
+                    $data,
+                    sprintf(self::XML_PATH_ENABLE_CONFIRMATION_REQUIRED, $this->_type)
+                );
+                $userInfo['customerId'] = $customer->getId();
                 $this->_helper->createSocialAccount($userInfo);
                 $this->socialSession->setSocialType($userInfo['type'] ?? '');
             } else {
@@ -161,7 +186,7 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
                     throw new LocalizedException(__('Your social account have connected to another account.'));
                 }
                 $this->_helper->createSocialAccount($userInfo);
-                $this->messageManager->addSuccessMessage(__('You have connected to your %1 account.',$this->_type));
+                $this->messageManager->addSuccessMessage(__('You have connected to your %1 account.', $this->_type));
             }
         }
     }
@@ -223,7 +248,7 @@ abstract class AbstractConnect extends \Magento\Framework\App\Action\Action
     /**
      * @param $userInfo
      * @param $customerId
-     * @throws \Exception
+     * @throws Exception
      */
     protected function connectSocial($userInfo, $customerId)
     {

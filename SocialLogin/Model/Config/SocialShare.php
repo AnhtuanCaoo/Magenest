@@ -32,6 +32,10 @@ class SocialShare implements \Magento\Framework\Option\ArrayInterface
             [
                 'value' => 'reddit',
                 'label' => __('Reddit'),
+            ],
+            [
+                'value' => 'line',
+                'label' => __('Line'),
             ]
         ];
     }

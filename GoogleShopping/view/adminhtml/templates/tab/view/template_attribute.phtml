@@ -1,0 +1,14 @@
+<?php
+/** @var $block \Magenest\GoogleShopping\Block\Adminhtml\Feed\Edit\Tab\Template */
+echo "Magenest";
+?>
+<div id="mapspecialdate" data-bind="scope: 'mapspecialdate'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+        {
+            "*":{
+                "Magento_Ui/js/core/app": <?= $block->getTemplateData() ?>
+            }
+        }
+    </script>
+</div>

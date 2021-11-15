@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Block\Notification;
+
 use Magenest\NotificationBox\Model\CustomerNotificationFactory;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification\CollectionFactory;
@@ -85,8 +86,7 @@ class Notification extends Template
         NotificationTypeFactory $notificationTypeFactory,
         NotificationType $notificationTypeResource,
         TimezoneInterface $timezoneInterface
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->collection                   = $collection;
         $this->session                      = $session;
@@ -101,61 +101,71 @@ class Notification extends Template
         $this->notificationTypeResource     = $notificationTypeResource;
         $this->timezoneInterface            = $timezoneInterface;
     }
-
-    /** get all customer notification */
+    /**
+     * Get all customer notification
+     */
     public function getAllCustomerNotification()
     {
         if ($customerId = $this->getCustomerId()) {
-            $this->notificationCollection = $this->collectionFactory->create()->addFieldToFilter('customer_id', $customerId);
+            $this->notificationCollection = $this->collectionFactory->create()
+                ->addFieldToFilter('customer_id', $customerId);
         }
         return $this->notificationCollection;
     }
-
-    /** get all notification unread */
+    /**
+     * Get all notification unread
+     */
     public function getAllNotificationUnread()
     {
-        return $this->getAllCustomerNotification()->addFieldToFilter('status',0);
+        return $this->getAllCustomerNotification()->addFieldToFilter('status', 0);
     }
-
-    /** get all notification */
+    /**
+     * Get all notification
+     */
     public function allNotification()
     {
         $numberNotification = $this->helper->getMaximumNotificationOnNotificationBox();
-        $allNotification = $this->getAllCustomerNotification()->setPageSize($numberNotification)->setOrder('entity_id','DESC')->getData();
-        foreach ($allNotification as $key => $notification)
-        {
+        $allNotification = $this->getAllCustomerNotification()->setPageSize($numberNotification)
+            ->setOrder('entity_id', 'DESC')->getData();
+        foreach ($allNotification as $key => $notification) {
             $notification['image'] = $this->helper->getImageByNotificationType($notification);
             $allNotification[$key]['icon'] = $notification['image'];
-            if(isset($notification['description'])){
+            if (isset($notification['description'])) {
                 $maximumCharacter = $this->helper->getMaximumNotificationDescription();
-                $allNotification[$key]['description'] = strlen($notification['description']) <= $maximumCharacter ?$notification['description']:mb_substr($notification['description'], 0, $maximumCharacter, 'UTF-8')."...";
+                $allNotification[$key]['description']
+                    = strlen($notification['description']) <= $maximumCharacter ? $notification['description'] :
+                    mb_substr($notification['description'], 0, $maximumCharacter, 'UTF-8')."...";
             }
-            if($notification['redirect_url'] == null){
+            if ($notification['redirect_url'] == null) {
                 $allNotification[$key]['redirect_url'] = $this->getUrl('notibox/customer/notification');
-                if($notification['notification_type'] == \Magenest\NotificationBox\Model\Notification::ORDER_STATUS_UPDATE){
+                if ($notification['notification_type']
+                    == \Magenest\NotificationBox\Model\Notification::ORDER_STATUS_UPDATE) {
                     $allNotification[$key]['redirect_url'] = $this->getUrl('sales/order/history/');
                 }
-                if($notification['notification_type'] == \Magenest\NotificationBox\Model\Notification::REVIEW_REMINDERS){
+                if ($notification['notification_type']
+                    == \Magenest\NotificationBox\Model\Notification::REVIEW_REMINDERS) {
                     $allNotification[$key]['redirect_url'] = $this->getUrl('checkout/cart/');
                 }
             }
-            if(isset($notification['created_at'])){
-                $allNotification[$key]['created_at'] = $this->timezoneInterface->formatDateTime($notification['created_at'],2,2);
+            if (isset($notification['created_at'])) {
+                $allNotification[$key]['created_at'] = $this->timezoneInterface
+                    ->formatDateTime($notification['created_at'], 2, 2);
             }
         }
         return $allNotification;
     }
-
-
-    /** check customer is login or not
-     * return customer id
+    /**
+     * Check customer is login or not
+     *
+     * Return customer id
      */
     public function getCustomerId()
     {
         return $this->helper->getCustomerId();
     }
-
-    /** redirect to login page if customer is not login */
+    /**
+     * Redirect to login page if customer is not login
+     */
     public function redirectIfNotLoggedIn()
     {
         if (!$this->session->isLoggedIn()) {
@@ -163,33 +173,46 @@ class Notification extends Template
             $this->session->authenticate();
         }
     }
-
-
-    /** get background color for notification box */
-    public function getThemeColor(){
+    /**
+     * Get background color for notification box
+     */
+    public function getThemeColor()
+    {
         return $this->helper->getThemeColor();
     }
-
-    /** get all notification is unread */
-    public function getUnreadNotification(){
+    /**
+     * Get all notification is unread
+     */
+    public function getUnreadNotification()
+    {
         return $this->helper->getUnreadNotification();
     }
-
-    /** get sender id */
-    public function getSenderId(){
+    /**
+     * Get sender id
+     */
+    public function getSenderId()
+    {
         return $this->helper->getSenderId();
     }
-
-    /** get time resend popup */
-    public function getTimeResendPopUp(){
+    /**
+     * Get time resend popup
+     */
+    public function getTimeResendPopUp()
+    {
         return $this->helper->getTimeResendPopUp();
     }
-
-    public function getBoxPosition(){
+    /**
+     * Get box position
+     */
+    public function getBoxPosition()
+    {
         return $this->helper->getBoxPosition();
     }
-
-    public function getBoxWidth(){
+    /**
+     * Get box width
+     */
+    public function getBoxWidth()
+    {
         return $this->helper->getBoxWidth();
     }
 }

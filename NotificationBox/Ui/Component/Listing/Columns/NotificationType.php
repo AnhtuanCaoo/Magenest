@@ -47,20 +47,24 @@ class NotificationType extends Column
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item['id'])) {
                         $item[$this->getData('name')]['edit'] = [
-                            'href' => $this->_urlBuilder->getUrl("notibox/notificationtype/newAction",
-                                ['id' => $item['id']]),
+                            'href' => $this->_urlBuilder->getUrl(
+                                "notibox/notificationtype/newAction",
+                                ['id' => $item['id']]
+                            ),
                             'label' => __('Edit'),
                         ];
-                    }else{
-                        $item[$this->getData('name')]['edit'] = [
-                            'href' => $this->_urlBuilder->getUrl("notibox/notificationtype/newAction",
-                                ['entity_id' => $item['entity_id']]),
-                            'label' => __('Edit'),
-                        ];
-                    }
-
+                } else {
+                    $item[$this->getData('name')]['edit'] = [
+                        'href' => $this->_urlBuilder->getUrl(
+                            "notibox/notificationtype/newAction",
+                            ['entity_id' => $item['entity_id']]
+                        ),
+                        'label' => __('Edit'),
+                    ];
                 }
+
             }
+        }
         return $dataSource;
     }
 }

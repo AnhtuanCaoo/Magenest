@@ -3,17 +3,21 @@
 namespace Magenest\NotificationBox\Model\ResourceModel\NotificationType;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Magenest\NotificationBox\Model\NotificationType as Model;
+use Magenest\NotificationBox\Model\ResourceModel\NotificationType as ResourceModel;
 
 /**
  * Class Collection
- * @package Magenest\NotificationBox\Model\ResourceModel\NotificationType;
+ * Magenest\NotificationBox\Model\ResourceModel\NotificationType;
  */
 class Collection extends AbstractCollection
 {
     protected $_idFieldName = 'entity_id';
-
+    /**
+     * Init collection
+     */
     protected function _construct()
     {
-        $this->_init('Magenest\NotificationBox\Model\NotificationType', 'Magenest\NotificationBox\Model\ResourceModel\NotificationType');
+        $this->_init(Model::class, ResourceModel::class);
     }
 }

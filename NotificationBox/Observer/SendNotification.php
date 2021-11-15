@@ -8,13 +8,14 @@ use Magento\Framework\Event\ObserverInterface;
 use Magenest\NotificationBox\Model\ResourceModel\Notification\CollectionFactory;
 use Magenest\NotificationBox\Model\CustomerNotificationFactory;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification;
-use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification\CollectionFactory as CustomerNotificationCollectionFactory;
+use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification\CollectionFactory
+    as CustomerNotificationCollectionFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magenest\NotificationBox\Model\CustomerTokenFactory;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerToken;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerToken\CollectionFactory as Collection;
 use Magenest\NotificationBox\Helper\Helper;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 use Magenest\NotificationBox\Model\CustomerNotification as CustomerNotificationModel;
 use \Magento\Store\Model\StoreManagerInterface;
 use Magenest\NotificationBox\Model\ResourceModel\NotificationQueue;
@@ -50,7 +51,7 @@ class SendNotification implements ObserverInterface
     /** @var Collection */
     protected $tokenCollection;
 
-    /** @var LoggerInterface */
+    /** @var Logger */
     protected $logger;
 
     /** @var StoreManagerInterface  */
@@ -75,7 +76,7 @@ class SendNotification implements ObserverInterface
      * @param CustomerNotificationCollectionFactory $customerNotification
      * @param CustomerNotificationFactory $customerNotificationFactory
      * @param Helper $helper
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      * @param StoreManagerInterface $storeManager
      * @param NotificationQueue $notificationQueue
      * @param NotificationQueueFactory $notificationQueueFactory
@@ -91,13 +92,12 @@ class SendNotification implements ObserverInterface
         CustomerNotificationCollectionFactory $customerNotification,
         CustomerNotificationFactory $customerNotificationFactory,
         Helper $helper,
-        LoggerInterface $logger,
+        Logger $logger,
         StoreManagerInterface $storeManager,
         NotificationQueue $notificationQueue,
         NotificationQueueFactory $notificationQueueFactory,
         Session $checkoutSession
-    )
-    {
+    ) {
         $this->checkoutSession = $checkoutSession;
         $this->notificationQueue = $notificationQueue;
         $this->notificationQueueFactory = $notificationQueueFactory;
@@ -113,33 +113,54 @@ class SendNotification implements ObserverInterface
         $this->collection = $collection->create();
         $this->customerNotification = $customerNotification;
     }
-
     /**
+     * Send notification after save
+     *
+     * @param mixed $customerToken
+     * @param mixed $notification
+     */
+    protected function sendNotificationWithFireBaseAfterSave($customerToken, $notification)
+    {
+        $tokenSent = [];
+        foreach ($customerToken as $token) {
+            $currentToken =  ['token' => $token->getToken(), 'id'=>$token->getGuestId()];
+            if (!in_array($currentToken, $tokenSent)) {
+                $this->helper->sendNotificationWithFireBase($notification, $token);
+            }
+            $tokenSent[] = $currentToken;
+        }
+    }
+    /**
+     * Execute
+     *
      * @param \Magento\Framework\Event\Observer $observer
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->helper->getEnableModule()){
+        if (!$this->helper->getEnableModule()) {
             return;
         }
         /**
          * @var \Magento\Sales\Model\Order $order
          */
         try {
+            $existNotification = false;
             $order = $observer->getOrder();
+            $orderId = $order->getId();
             $customerId = $order->getCustomerId();
             $orderStatus = $order->getStatus();
             $storeId = $order->getStoreId();
             $customerGroupId = $order->getCustomerGroupId();
             $listNotification = $this->collection
                 ->addFieldToFilter('is_active', Notification::ACTIVE)
-                ->addFieldToFilter('notification_type', [Notification::ORDER_STATUS_UPDATE,Notification::REVIEW_REMINDERS])
+                ->addFieldToFilter('notification_type', [Notification::ORDER_STATUS_UPDATE,
+                    Notification::REVIEW_REMINDERS])
                 ->getData();
             $customerToken = $this->tokenCollection->create()
-                    ->addFieldToFilter('store_id',$storeId)
+                    ->addFieldToFilter('store_id', $storeId)
                     ->addFieldToFilter('is_active', CustomerTokenModel::IS_ACTIVE)
                     ->addFieldToFilter('status', CustomerTokenModel::STATUS_SUBSCRIBED)
-                    ->addFieldToFilter('customer_id',$customerId);
+                    ->addFieldToFilter('customer_id', $customerId);
             foreach ($listNotification as $key => $notification) {
                 $listOrderStatus = $this->serialize->unserialize($notification['condition']);
                 if (!in_array($orderStatus, $listOrderStatus)) {
@@ -161,36 +182,50 @@ class SendNotification implements ObserverInterface
                 }
 
                  //add notification to queue
-                if($notification['send_time'] == 'schedule_time' || $notification['send_time'] == 'send_after_the_trigger_condition'){
+                if ($notification['send_time']
+                    == 'schedule_time'
+                    || $notification['send_time']
+                    == 'send_after_the_trigger_condition') {
                     unset($notification['created_at']);
                     unset($notification['update_at']);
                     $notification['customer_id'] = $customerId;
-                    $notification['description'] = str_replace('{{order_id}}', '#'.$order->getId(), $notification['description']);
-                    $notification['description'] = str_replace('{{order_status}}', $order->getStatus(), $notification['description']);
+                    $notification['description'] =
+                        str_replace('{{order_id}}', '#'.$order->getId(), $notification['description']);
+                    $notification['description'] =
+                        str_replace('{{order_status}}', $order->getStatus(), $notification['description']);
                     $notificationQueueModel = $this->notificationQueueFactory->create();
                     $notificationQueueModel->addData($notification);
                     $this->notificationQueue->save($notificationQueueModel);
                     continue;
                 }
 
-                if($notification['send_time'] == 'send_immediately'){
+                if ($notification['send_time'] == 'send_immediately') {
                     unset($notification['created_at']);
                     $notification['customer_id'] = $customerId;
                     $notification['icon'] = $notification['image'];
                     $notification['star'] = CustomerNotificationModel::UNSTAR;
                     $notification['status'] = CustomerNotificationModel::STATUS_UNREAD;
                     $notification['notification_id'] = $notification['id'];
+                    $notification['order_id'] = $orderId;
+                    $notification['order_status'] = $orderStatus;
                     $customerNotification = $this->customerNotificationFactory->create();
-                    $customerNotification->addData($notification);
-                    $this->customerNotificationResource->save($customerNotification);
-
-                    $tokenSent = [];
-                    foreach ($customerToken as $token) {
-                        $currentToken =  ['token' => $token->getToken(), 'id'=>$token->getGuestId()];
-                        if(!in_array($currentToken,$tokenSent)){
-                            $this->helper->sendNotificationWithFireBase($notification,$token);
+                    $collection = $this->customerNotification->create()
+                        ->addFieldToFilter('order_id', $orderId)
+                        ->addFieldToFilter('notification_id', $notification['id'])
+                        ->addFieldToFilter('order_status', $orderStatus)
+                        ->addFieldToFilter('customer_id', $customerId);
+                    foreach ($collection as $value) {
+                        if ($value->getData('order_id') == $orderId
+                            && $value->getData('notification_id') == $notification['id']
+                            && $value->getData('order_status') == $orderStatus
+                            && $value->getData('customer_id') == $customerId) {
+                            $existNotification = true;
                         }
-                        $tokenSent[] = $currentToken;
+                    }
+                    if ($existNotification ==  false) {
+                        $customerNotification->addData($notification);
+                        $this->customerNotificationResource->save($customerNotification);
+                        $this->sendNotificationWithFireBaseAfterSave($customerToken, $notification);
                     }
                 }
             }

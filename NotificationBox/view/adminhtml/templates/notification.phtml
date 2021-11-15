@@ -9,11 +9,11 @@ $url = $block->getUrl('notibox/report/getReport');
     <div class="admin__page-section-content">
         <div class="select-date" data-role="show-report-date">
             <div id="from-date" data-role="from-date" data-bind="scope: 'from-date'">
-                <?= __('From') ?>:
+                <?= $block->escapeHtml(__('From')) ?>:
                 <!-- ko template: getTemplate() --><!-- /ko -->
             </div>
             <div id="to-date" data-role="to-date" data-bind="scope: 'to-date'">
-                <?= __('To') ?>:
+                <?= $block->escapeHtml(__('To')) ?>:
                 <!-- ko template: getTemplate() --><!-- /ko -->
             </div>
             <div  id="submit">
@@ -42,11 +42,11 @@ $url = $block->getUrl('notibox/report/getReport');
                     },
                     "report-chart": {
                         "component": "Magenest_NotificationBox/js/report/report-chart",
-                        "url": "<?=$url?>",
-                        "totalSubscribers":"<?=$block->getTotalSubscribers()?>",
-                        "totalUnSubscribers":"<?=$block->getTotalUnSubscribers()?>",
-                        "from":"<?=$block->getTimeNow()?>",
-                        "to":"<?=$block->getTimeBefore7Day()?>"
+                        "url": "<?= $block->escapeHtml($url)?>",
+                        "totalSubscribers":"<?= $block->escapeHtml($block->getTotalSubscribers())?>",
+                        "totalUnSubscribers":"<?= $block->escapeHtml($block->getTotalUnSubscribers())?>",
+                        "from":"<?= $block->escapeHtml($block->getTimeNow())?>",
+                        "to":"<?= $block->escapeHtml($block->getTimeBefore7Day())?>"
                     }
                 }
             }

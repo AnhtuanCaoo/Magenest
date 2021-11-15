@@ -7,17 +7,19 @@ use Magenest\NotificationBox\Model\NotificationType;
 
 /**
  * Class BooleanFilter
+ * Magenest\NotificationBox\Ui\Component\NotificationType
  */
 class BooleanFilter implements OptionSourceInterface
 {
-
     const FILTERABLE=1;
     const NOT_FILTERABLE=0;
-
-    public static function getOptionArray()
+    /**
+     * Get option array
+     */
+    protected function getOptionArray()
     {
         return [
-            NotificationType::IS_CATEGORY=> __('Yes'),
+            NotificationType::IS_CATEGORY => __('Yes'),
             NotificationType::IS_NOT_CATEGORY => __('No')
         ];
     }

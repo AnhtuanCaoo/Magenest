@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\HandleNotification;
+
 use Magenest\NotificationBox\Model\CustomerNotification as CustomerNotificationModel;
 use Magento\Framework\App\Action\Action;
 use Magenest\NotificationBox\Helper\Helper;
@@ -23,9 +24,11 @@ class Delete extends Action
     protected $customerNotificationFactory;
 
     /** @var JsonFactory  */
-    protected  $resultJsonFactory;
+    protected $resultJsonFactory;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param Helper $helper
      * @param CustomerNotification $customerNotification
@@ -38,8 +41,7 @@ class Delete extends Action
         CustomerNotification $customerNotification,
         CustomerNotificationFactory $customerNotificationFactory,
         JsonFactory $resultJsonFactory
-    )
-    {
+    ) {
         $this->customerNotificationFactory  = $customerNotificationFactory;
         $this->customerNotification         = $customerNotification;
         $this->helper                       = $helper;
@@ -47,32 +49,33 @@ class Delete extends Action
         parent::__construct($context);
     }
 
-    /** Delete Notification */
+    /**
+     * Delete Notification
+     */
     public function execute()
     {
         $params = $this->getRequest()->getParams();
         $customerId = $this->helper->getCustomerId();
         $result = $this->resultJsonFactory->create();
-        if($customerId && $params['listNotificationSelected'] && isset($params['type'])){
+        if ($customerId && $params['listNotificationSelected'] && isset($params['type'])) {
             try {
-                foreach ($params['listNotificationSelected'] as $notification){
+                foreach ($params['listNotificationSelected'] as $notification) {
                     $notificationId = $notification;
                     $notification = $this->customerNotificationFactory->create();
-                    $this->customerNotification->load($notification,$notificationId);
-                    if($params['type'] =='maskAsRead') {
+                    $this->customerNotification->load($notification, $notificationId);
+                    if ($params['type'] =='maskAsRead') {
                         $notification->setData('status', CustomerNotificationModel::STATUS_READ);
                         $this->customerNotification->save($notification);
                     }
-                    if($params['type'] =='delete'){
+                    if ($params['type'] =='delete') {
                         $this->customerNotification->delete($notification);
                     }
-                    if($params['type'] =='unstar'){
+                    if ($params['type'] =='unstar') {
                         $notification->setData('star', CustomerNotificationModel::UNSTAR);
                         $this->customerNotification->save($notification);
                     }
                 }
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 $this->messageManager->addErrorMessage('Unable to delete notification');
             }
         }

@@ -14,7 +14,7 @@ use Magenest\NotificationBox\Model\ResourceModel\NotificationType;
 
 /**
  * Class Image
- * @package Magenest\NotificationBox\Ui\Component\Listing\Columns
+ * Magenest\NotificationBox\Ui\Component\Listing\Columns
  */
 class Image extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -81,6 +81,8 @@ class Image extends \Magento\Ui\Component\Listing\Columns\Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      */
@@ -89,36 +91,37 @@ class Image extends \Magento\Ui\Component\Listing\Columns\Column
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getName();
             foreach ($dataSource['data']['items'] as & $item) {
-                if(isset($item['notification_type'])) {
+                if (isset($item['notification_type'])) {
                     $notificationModel = $this->notificationTypeFactory->create();
-                    if( $item['notification_type'] == Notification::ORDER_STATUS_UPDATE ||
+                    if ($item['notification_type'] == Notification::ORDER_STATUS_UPDATE ||
                         $item['notification_type'] == Notification::ABANDONED_CART_REMINDS ||
                         $item['notification_type'] == Notification::REVIEW_REMINDERS
                     ) {
-                        $this->notificationTypeResource->load($notificationModel,$item['notification_type'],'default_type');
+                        $this->notificationTypeResource
+                            ->load($notificationModel, $item['notification_type'], 'default_type');
+                        $item['notification_type'] = $notificationModel->getName();
+                    } else {
+                        $this->notificationTypeResource
+                            ->load($notificationModel, $item['notification_type'], 'entity_id');
                         $item['notification_type'] = $notificationModel->getName();
                     }
-                    else{
-                        $this->notificationTypeResource->load($notificationModel,$item['notification_type'],'entity_id');
-                        $item['notification_type'] = $notificationModel->getName();
-                    }
-                    if($notificationModel->getIcon()){
+                    if ($notificationModel->getIcon()) {
                         try {
                             $image = $this->serialize->unserialize($notificationModel->getIcon());
                             $item[$fieldName . '_src'] = $image[0]['url'];
                             $item[$fieldName . '_orig_src']= $image[0]['url'];
 
-                        }catch (\Exception $e){
+                        } catch (\Exception $e) {
                             $item['image'] = '';
                         }
-                    }
-                    else{
+                    } else {
                         $mediaUrl = $this->helper->getImageDefault();
                         $item[$fieldName . '_src'] = $mediaUrl;
                         $item[$fieldName . '_orig_src'] = $mediaUrl;
                     }
                     $item[$fieldName . '_link'] = $this->urlBuilder->getUrl(
-                        'notibox/notification/newAction',['id'=>$item['id']]
+                        'notibox/notification/newAction',
+                        ['id'=>$item['id']]
                     );
                 }
             }

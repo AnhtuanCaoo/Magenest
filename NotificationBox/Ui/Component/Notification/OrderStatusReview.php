@@ -5,6 +5,8 @@ namespace Magenest\NotificationBox\Ui\Component\Notification;
 class OrderStatusReview implements \Magento\Framework\Option\ArrayInterface
 {
     /**
+     * Order status options
+     *
      * @return array
      */
     public function toOptionArray()

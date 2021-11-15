@@ -39,7 +39,7 @@ class Cron
     /** @var StoreManage */
     protected $listStore;
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Magenest\NotificationBox\Logger\Logger */
     protected $logger;
 
     /** @var NotificationCollection */
@@ -90,7 +90,7 @@ class Cron
      * @param Helper $helper
      * @param AbandonedCart $abandonedCart
      * @param StoreManage $storeManager
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magenest\NotificationBox\Logger\Logger $logger
      * @param NotificationCollection $notificationCollection
      * @param Json $serialize
      * @param DateTime $dateTime
@@ -111,7 +111,7 @@ class Cron
         Helper $helper,
         AbandonedCart $abandonedCart,
         StoreManage $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \Magenest\NotificationBox\Logger\Logger $logger,
         NotificationCollection $notificationCollection,
         Json $serialize,
         DateTime $dateTime,
@@ -127,8 +127,7 @@ class Cron
         NotificationQueue $notificationQueue,
         ManagerInterface $managerInterface,
         StoreRepositoryInterface $storeRepositoryInterface
-    )
-    {
+    ) {
         $this->storeRepositoryInterface = $storeRepositoryInterface;
         $this->managerInterface = $managerInterface;
         $this->notificationQueue = $notificationQueue;
@@ -171,7 +170,9 @@ class Cron
         }
     }
 
-    /** send notification reminder abandoned cart */
+    /**
+     * Send notification reminder abandoned cart
+     */
     public function reminderAbandonedCart()
     {
 
@@ -179,7 +180,8 @@ class Cron
             return;
         }
         $listNotification = $this->notificationCollection->create();
-        $listNotification = $listNotification->addFieldToFilter('notification_type', 'abandoned_cart_reminds')
+        $listNotification = $listNotification
+            ->addFieldToFilter('notification_type', 'abandoned_cart_reminds')
             ->addFieldToFilter('is_active', NotificationModel::ACTIVE)
             ->getData();
 
@@ -199,17 +201,17 @@ class Cron
                 $hour = $notification['condition'];
                 //Get the time --$hour-- hour ago
                 $remindDay = date('Y-m-d H:i:s', strtotime('-' . $hour . ' hour', strtotime($now)));
-                if(isset($notification['time_sent'])){
+                if (isset($notification['time_sent'])) {
                     $listTimeSent = $this->serialize->unserialize($notification['time_sent']);
                     //$listTimeSent[$customerId]: the latest reminder time
-                    if(isset($listTimeSent[$customerId]) && $remindDay < $listTimeSent[$customerId]){
+                    if (isset($listTimeSent[$customerId]) && $remindDay < $listTimeSent[$customerId]) {
                         $allowSend = false;
                     }
                 }
 
                 if ($allowSend && strtotime($remindDay) >= $timeUpdate) {
                     $notificationModel = $this->notificationFactory->create();
-                    $this->notificationResource->load($notificationModel,$notification['id']);
+                    $this->notificationResource->load($notificationModel, $notification['id']);
 
                     $listStoreView = $this->serialize->unserialize($notification['store_view']);
                     $listCustomerGroup = $this->serialize->unserialize($notification['customer_group']);
@@ -218,24 +220,24 @@ class Cron
                         continue;
                     }
                     //sent notification via firebase
-                    $customerToken = $this->customerTokenCollection->create()->addFieldToFilter('customer_id', $customerId)
+                    $customerToken = $this->customerTokenCollection->create()
+                                    ->addFieldToFilter('customer_id', $customerId)
                                     ->addFieldToFilter('is_active', NotificationModel::ACTIVE)
                                     ->addFieldToFilter('status', CustomerTokenModel::STATUS_SUBSCRIBED);
-                    if($customerToken){
-                        $tokenSent = [];
-                        foreach ($customerToken as $token){
-                            $currentToken =  ['token' => $token->getToken(), 'id'=>$token->getGuestId()];
-                            if(!in_array($currentToken,$tokenSent)){
-                                $this->helper->sendNotificationWithFireBase($notification,$token);
-                            }
-                            $tokenSent[] = $currentToken;
+                    $tokenSent = [];
+                    foreach ($customerToken as $token) {
+                        $currentToken =  ['token' => $token->getToken(), 'id'=>$token->getGuestId()];
+                        if (!in_array($currentToken, $tokenSent)) {
+                            $this->helper->sendNotificationWithFireBase($notification, $token);
                         }
+                        $tokenSent[] = $currentToken;
                     }
+
                     unset($notification['id']);
                     unset($notification['created_at']);
-                    $this->saveCustomerNotification($notification,$customerId);
+                    $this->saveCustomerNotification($notification, $customerId);
                     //update time sent
-                    if(isset($notificationModel['time_sent']) && $notificationModel['time_sent']!== null) {
+                    if (isset($notificationModel['time_sent']) && $notificationModel['time_sent']!== null) {
                         $listTimeSent = $this->serialize->unserialize($notificationModel->getTimeSent());
                     }
                     $listTimeSent[$customerId] = $now;
@@ -246,7 +248,11 @@ class Cron
         }
     }
 
-    /** return array */
+    /**
+     * Get list store
+     *
+     * Return array
+     */
     public function getListStore()
     {
         $options = [];
@@ -259,7 +265,7 @@ class Cron
     }
 
     /**
-     * send scheduled and queue announcements to customers and guests
+     * Send scheduled and queue announcements to customers and guests
      */
     public function sendNotification()
     {
@@ -268,16 +274,21 @@ class Cron
         }
         $notificationSent = [];
         $notificationQueue = [];
-        $listNotificationType = [NotificationModel::REVIEW_REMINDERS, NotificationModel::ORDER_STATUS_UPDATE, NotificationModel::ABANDONED_CART_REMINDS];
+        $listNotificationType = [
+            NotificationModel::REVIEW_REMINDERS,
+            NotificationModel::ORDER_STATUS_UPDATE,
+            NotificationModel::ABANDONED_CART_REMINDS
+        ];
 
         //get all the notices to send
         $listNotification = $this->notificationCollection->create()
-            ->addFieldToFilter('notification_type', array('nin' => $listNotificationType))
+            ->addFieldToFilter('notification_type', ['nin' => $listNotificationType])
             ->addFieldToFilter('is_active', NotificationModel::ACTIVE)
             ->addFieldToFilter('is_sent', NotificationModel::IS_NOT_SENT)
             ->addFieldToFilter('send_time', ['neq' => 'send_immediately'])
             ->getData();
-        $listNotificationQueue = $this->notificationQueueCollection->addFieldToFilter('is_sent', NotificationModel::IS_NOT_SENT)->getData();
+        $listNotificationQueue = $this->notificationQueueCollection
+            ->addFieldToFilter('is_sent', NotificationModel::IS_NOT_SENT)->getData();
 
         $allCustomer = $this->helper->getAllCustomer();
 
@@ -285,12 +296,13 @@ class Cron
 
         //Send custom notice
         foreach ($listNotification as $notification) {
-            $notificationSent[] = $this->sendNotificationViaMagentoAndFireBase($notification,$now,$allCustomer);
+            $notificationSent[] = $this->sendNotificationViaMagentoAndFireBase($notification, $now, $allCustomer);
         }
 
         //Send queue notice
         foreach ($listNotificationQueue as $notification) {
-            $notificationQueue[] = $this->sendNotificationViaMagentoAndFireBase($notification,$now,$notification['customer_id']);
+            $notificationQueue[] = $this
+                ->sendNotificationViaMagentoAndFireBase($notification, $now, $notification['customer_id']);
         }
 
         //only send once
@@ -312,10 +324,9 @@ class Cron
         }
         if (count($notificationQueue)) {
             foreach ($notificationQueue as $item) {
-                if(isset($item))
-                {
+                if (isset($item)) {
                     $notificationQueueModel = $this->notificationQueueFactory->create();
-                    $this->notificationQueue->load($notificationQueueModel, $item,'id');
+                    $this->notificationQueue->load($notificationQueueModel, $item, 'id');
                     try {
                         $this->notificationQueue->delete($notificationQueueModel);
                     } catch (\Exception $e) {
@@ -325,29 +336,40 @@ class Cron
             }
         }
     }
-
-    public function sendNotificationAfterSave(){
+    /**
+     * Send notification after save
+     */
+    public function sendNotificationAfterSave()
+    {
         if (!$this->helper->getEnableModule()) {
             return;
         }
-        $listNotificationType = [NotificationModel::REVIEW_REMINDERS, NotificationModel::ORDER_STATUS_UPDATE, NotificationModel::ABANDONED_CART_REMINDS];
+        $listNotificationType = [
+            NotificationModel::REVIEW_REMINDERS,
+            NotificationModel::ORDER_STATUS_UPDATE,
+            NotificationModel::ABANDONED_CART_REMINDS
+        ];
         $listNotification = $this->notificationCollection->create()
-            ->addFieldToFilter('notification_type', array('nin' => $listNotificationType))
+            ->addFieldToFilter('notification_type', ['nin' => $listNotificationType])
             ->addFieldToFilter('is_active', NotificationModel::ACTIVE)
             ->addFieldToFilter('is_sent', NotificationModel::IS_NOT_SENT)
             ->addFieldToFilter('send_time', ['eq' => 'send_immediately']);
-        foreach ($listNotification as $notification){
+        foreach ($listNotification as $notification) {
             $this->helper->sendNotificationInMagento($notification->getData());
             $this->helper->sendNotificationWithFireBase($notification->getData());
-            $notification->setData('is_sent',NotificationModel::IS_SENT);
+            $notification->setData('is_sent', NotificationModel::IS_SENT);
+            $total_sent = $notification->getData('total_sent');
+            $notification->setData('total_sent', $total_sent + 1);
             $this->notificationResource->save($notification);
         }
     }
 
     /**
-     * get time to send from notification
-     * return date time
-     * @param $notification
+     * Get time to send from notification
+     *
+     * Return date time
+     *
+     * @param array $notification
      * @return false|string
      */
     private function getTimeToSendNotification($notification)
@@ -359,42 +381,47 @@ class Cron
             $scheduleTo = $this->serialize->unserialize($notification['schedule']);
             $sendAfter = $scheduleTo['send_after'];
             $unit = $scheduleTo['unit'];
-            $timeToSend = date('Y-m-d H:i', strtotime('+' . $sendAfter . $unit, strtotime($notification['update_at'])));
+            $timeToSend = date(
+                'Y-m-d H:i',
+                strtotime('+' . $sendAfter . $unit, strtotime($notification['update_at']))
+            );
         }
         return $timeToSend;
     }
 
     /**
-     * send notification via Firebase and Magento
-     * return list notification id sent
-     * @param $notification
-     * @param $now
-     * @param $allCustomer
+     * Send notification via Firebase and Magento
+     *
+     * Return list notification id sent
+     *
+     * @param array $notification
+     * @param int $now
+     * @param string $allCustomer
      * @return array
      * @throws AlreadyExistsException
      */
-    private function sendNotificationViaMagentoAndFireBase($notification,$now,$allCustomer){
+    private function sendNotificationViaMagentoAndFireBase($notification, $now, $allCustomer)
+    {
         $id = null;
-        try{
+        try {
             //Send notifications to tokens that satisfy the condition via firebase
             $timeToSend = $this->getTimeToSendNotification($notification);
             if (isset($timeToSend) && $now >= $timeToSend) {
-                if(is_string($allCustomer)){
+                if (is_string($allCustomer)) {
                     //send notice via magento
-                    $this->saveCustomerNotification($notification,$notification['customer_id']);
+                    $this->saveCustomerNotification($notification, $notification['customer_id']);
                     //send notice via firebase
                     $tokens = ($notification['token'])?$notification['token'] : $this->helper->getToken($notification);
                     $tokenSent = [];
-                    foreach ($tokens as $token){
+                    foreach ($tokens as $token) {
                         $currentToken =  ['token' => $token->getToken(), 'id'=>$token->getGuestId()];
-                        if(!in_array($currentToken,$tokenSent)){
-                            $this->helper->sendNotificationWithFireBase($notification,$token);
+                        if (!in_array($currentToken, $tokenSent)) {
+                            $this->helper->sendNotificationWithFireBase($notification, $token);
                         }
                         $tokenSent[] = $currentToken;
                     }
                     $id = $notification['id'];
-                }
-                elseif (isset($allCustomer)){
+                } elseif (isset($allCustomer)) {
                     //send to guest
                     $this->helper->sendNotificationWithFireBase($notification);
                     //send to customer
@@ -406,36 +433,38 @@ class Cron
                         $listStoreView = $this->serialize->unserialize($notification['store_view']);
                         $listCustomerGroup = $this->serialize->unserialize($notification['customer_group']);
                         if (!in_array('0', $listStoreView) && !in_array($storeId, $listStoreView) ||
-                            !in_array('0', $listCustomerGroup) && !in_array($customerGroupId, $listCustomerGroup))
-                        {
+                            !in_array('0', $listCustomerGroup) && !in_array($customerGroupId, $listCustomerGroup)) {
                             continue;
                         }
-                        $this->saveCustomerNotification($notification,$customerId);
+                        $this->saveCustomerNotification($notification, $customerId);
                     }
                     $id = $notification['id'];
-                }else{
-                    if(isset($notification['token'])){
+                } else {
+                    if (isset($notification['token'])) {
                         $customerToken = $this->customerTokenCollection->create()
-                            ->addFieldToFilter('token',$notification['token'])
+                            ->addFieldToFilter('token', $notification['token'])
                             ->addFieldToFilter('status', CustomerTokenModel::STATUS_SUBSCRIBED)
                             ->addFieldToFilter('is_active', CustomerTokenModel::IS_ACTIVE);
-                        $this->helper->sendNotificationWithFireBase($notification,$customerToken->getFirstItem());
+                        $this->helper->sendNotificationWithFireBase($notification, $customerToken->getFirstItem());
                         $id = $notification['id'];
                     }
                 }
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->managerInterface->addErrorMessage($e->getMessage());
         }
         return $id;
     }
 
     /**
-     * @param $notification
-     * @param $customerId
+     * Save customer notification
+     *
+     * @param array $notification
+     * @param string $customerId
      */
-    private function saveCustomerNotification($notification,$customerId){
-        try{
+    private function saveCustomerNotification($notification, $customerId)
+    {
+        try {
             unset($notification['created_at']);
             unset($notification['entity_id']);
             $notification['customer_id'] = $customerId;
@@ -445,7 +474,7 @@ class Cron
             $customerNotification = $this->customerNotificationFactory->create();
             $customerNotification->addData($notification);
             $this->customerNotificationResource->save($customerNotification);
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->logger->error($exception->getMessage());
         }
     }

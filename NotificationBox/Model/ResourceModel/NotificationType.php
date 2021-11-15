@@ -6,7 +6,7 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
  * Class NotificationType
- * @package Magenest\NotificationBox\Model\ResourceModel;
+ * Magenest\NotificationBox\Model\ResourceModel;
  */
 class NotificationType extends AbstractDb
 {

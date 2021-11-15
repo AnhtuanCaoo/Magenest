@@ -5,5 +5,13 @@
         <referenceContainer name="content">
             <block class="Magenest\Customer\Block\Customer" name="customer_detail" template="Magenest_Customer::customer.phtml" />
         </referenceContainer>
+        <referenceBlock name="customer_account_navigation" >
+            <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-coupon-claimed">
+                <arguments>
+                    <argument name="path" xsi:type="string">coupon/customer/index</argument>
+                    <argument name="label" xsi:type="string">My Coupon</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
     </body>
 </page>

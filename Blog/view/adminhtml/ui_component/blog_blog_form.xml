@@ -54,9 +54,6 @@
                 <item name="sortOrder" xsi:type="number">20</item>
             </item>
         </argument>
-
-
-
         <field name="author_id">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Magenest\Blog\Model\Config\Backend\Options</item>

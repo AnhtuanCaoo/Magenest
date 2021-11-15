@@ -4,7 +4,11 @@
 ?>
 <div class="notificationBox" data-bind="scope: 'notificationBox'" hidden>
     <div class="magenest-notification" data-bind="visible: visibleNotificationBox">
-        <span class="magenest-notification-icon" ><img src="<?=$block->getViewFileUrl('Magenest_NotificationBox::image/noti.png');?>" alt=""></span>
+        <span class="magenest-notification-icon" >
+            <img src="<?= $block->escapeHtml($block
+                ->getViewFileUrl('Magenest_NotificationBox::image/noti.png'));?>"
+                 alt="">
+        </span>
         <span class="magenest-notification-count" data-bind="text: totalNotificationUnread"></span>
         <div >
             <!-- ko template: getTemplate() --><!-- /ko -->
@@ -21,11 +25,16 @@
                         "component": "Magenest_NotificationBox/js/notification/notification",
                         "template" : "Magenest_NotificationBox/notification",
                         "config": {
-                                    "url"                           : "<?=$block->getUrl("notibox/customer/notification")?>",
-                                    "currentUrl"                    : "<?=$block->getUrl()?>",
-                                    "backgroundColorValue"          : "<?=$block->getThemeColor()?>",
-                                    "boxPositionClass"              : "<?=$block->getBoxPosition()?>",
-                                    "notificationBoxWidth"          : "<?=$block->getBoxWidth()?>"
+                                    "url"                           :
+                                        "<?= $block->escapeHtml($block->getUrl("notibox/customer/notification"))?>",
+                                    "currentUrl"                    :
+                                        "<?= $block->escapeHtml($block->getUrl())?>",
+                                    "backgroundColorValue"          :
+                                        "<?= $block->escapeHtml($block->getThemeColor())?>",
+                                    "boxPositionClass"              :
+                                        "<?= $block->escapeHtml($block->getBoxPosition())?>",
+                                    "notificationBoxWidth"          :
+                                        "<?= $block->escapeHtml($block->getBoxWidth())?>"
                         }
                     }
                 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">forum_comment_form.forum_comment_form_data_source</item>
+            <item name="deps" xsi:type="string">forum_comment_form.forum_comment_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Add new comment</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">add_new_commentform</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="array">
+                <item name="name" xsi:type="string">back</item>
+                <item name="label" xsi:type="string" translate="true">Back</item>
+                <item name="class" xsi:type="string">back</item>
+                <item name="url" xsi:type="string">forum/comment/index</item>
+            </item>
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save comment</item>
+                <item name="label" xsi:type="string" translate="true">Save</item>
+                <item name="class" xsi:type="string">primary</item>
+                <item name="url" xsi:type="string">forum/comment/save</item>
+            </item>
+        </item>
+    </argument>
+    <dataSource name="forum_comment_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Magenest\Forum\Model\CommentDataProvider</argument>
+            <argument name="name" xsi:type="string">forum_comment_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">comment_id</argument>
+            <argument name="requestFieldName" xsi:type="string">comment_id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+                <item name="submit_url" path="forum/comment/save" xsi:type="url"/>
+            </item>
+        </argument>
+        <dataProvider class="Magenest\Forum\Model\CommentDataProvider" name="forum_comment_form_data_source">
+            <settings>
+                <requestFieldName>comment_id</requestFieldName>
+                <primaryFieldName>comment_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="magenest_forum_comment">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="collapsible" xsi:type="boolean">false</item>
+                <item name="label" xsi:type="string" translate="true">Forum comment</item>
+                <item name="sortOrder" xsi:type="number">20</item>
+            </item>
+        </argument>
+        <field name="post_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="label" xsi:type="string" translate="true">Post ID</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_forum_comment</item>
+                    <item name="dataScope" xsi:type="string">post_id</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="user_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="label" xsi:type="string" translate="true">User ID</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_forum_comment</item>
+                    <item name="dataScope" xsi:type="string">user_id</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="message">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Messages</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">magenest_forum_comment</item>
+                    <item name="dataScope" xsi:type="string">message</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+    </fieldset>
+</form>

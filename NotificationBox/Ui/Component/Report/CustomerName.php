@@ -5,9 +5,10 @@ namespace Magenest\NotificationBox\Ui\Component\Report;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use \Magento\Customer\Api\CustomerRepositoryInterface;
+
 /**
  * Class CustomerName
- * @package Magenest\NotificationBox\Ui\Component\Report
+ * Magenest\NotificationBox\Ui\Component\Report
  */
 class CustomerName extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -29,13 +30,14 @@ class CustomerName extends \Magento\Ui\Component\Listing\Columns\Column
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = []
-    )
-    {
+    ) {
         $this->customerRepositoryInterface = $customerRepositoryInterface;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -45,13 +47,12 @@ class CustomerName extends \Magento\Ui\Component\Listing\Columns\Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
-               if(isset($item['customer_id'])){
-                   $customerData = $this->customerRepositoryInterface->getById($item['customer_id']);
-                   $item['customer_name'] = $customerData->getFirstname() . " " . $customerData->getLastname();
-               }
-               else{
-                   $item['customer_name'] = 'GUEST';
-               }
+                if (isset($item['customer_id'])) {
+                    $customerData = $this->customerRepositoryInterface->getById($item['customer_id']);
+                    $item['customer_name'] = $customerData->getFirstname() . " " . $customerData->getLastname();
+                } else {
+                    $item['customer_name'] = 'GUEST';
+                }
             }
         }
         return $dataSource;

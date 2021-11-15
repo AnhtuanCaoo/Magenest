@@ -1,0 +1,49 @@
+<?php
+/**
+ * @var \Magenest\Forum\Block\Blog $block
+ */
+$blog = $block->getBlogDetail();
+foreach ($blog as $item) {
+    ?>
+    <div id="container-box">
+        <div style="display: flex; margin-top: 10px; ">
+            <a style="margin-right: 5px;"><?php echo($item->getData('firstname').' ') ?><?php echo($item->getData('lastname')) ?></a>
+            <div>-</div>
+            <div style="margin-left: 5px;"><?php echo($block->handleDate2($item->getData('created_at'))) ?></div>
+        </div>
+        <img width="60%" height="60%" src="<?php echo($block->handleImage($item->getData('image'))) ?>"/>
+
+    <?php echo ($block->handleContent($item->getData('content'))) ?>
+<?php } ?>
+
+    </div>
+<style>
+    #email-box{
+        margin-left: 10px;
+    }
+    #information-box{
+        display: flex;
+    }
+    .input-comment{
+        border: 1px solid #c2c2c2;
+        border-radius: 1px;
+        font-size: 14px;
+        height: 32px;
+        line-height: 1.42857143;
+        padding: 0 9px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    #container-box{
+        width: 130%;
+    }
+    #post-comments{
+        box-sizing: border-box;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    #comment-box{
+        padding: 8px;
+        height: 70px;
+        border: 1px solid #bbbbbb;
+    }
+</style>

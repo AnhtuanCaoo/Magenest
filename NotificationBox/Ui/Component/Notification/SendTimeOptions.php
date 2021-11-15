@@ -5,6 +5,8 @@ namespace Magenest\NotificationBox\Ui\Component\Notification;
 class SendTimeOptions implements \Magento\Framework\Option\ArrayInterface
 {
     /**
+     * Send time options
+     *
      * @return array
      */
     public function toOptionArray()

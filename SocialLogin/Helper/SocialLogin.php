@@ -2,14 +2,31 @@
 
 namespace Magenest\SocialLogin\Helper;
 
+use Exception;
+use Magenest\SocialLogin\Model\Config\DisplayOn;
+use Magenest\SocialLogin\Model\Pinterest\Client;
+use Magenest\SocialLogin\Model\ResourceModel\SocialAccount;
+use Magenest\SocialLogin\Model\ResourceModel\SocialAccount\CollectionFactory;
+use Magenest\SocialLogin\Model\SocialAccountFactory;
+use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\SessionFactory;
+use Magento\Customer\Model\Url;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Config\Model\Config;
 use Magento\Backend\App\ConfigInterface;
+use Magento\Framework\Exception\EmailNotConfirmedException;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Customer\Model\AccountConfirmation;
+use Magento\Customer\Model\AccountManagement;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 
 /**
  * Class SocialLogin
@@ -50,12 +67,12 @@ class SocialLogin extends AbstractHelper
     protected $_config;
 
     /**
-     * @var \Magento\Framework\Stdlib\CookieManagerInterface
+     * @var CookieManagerInterface
      */
     protected $cookieManager;
 
     /**
-     * @var \Magento\Customer\Model\Url
+     * @var Url
      */
     protected $customerUrl;
 
@@ -65,22 +82,22 @@ class SocialLogin extends AbstractHelper
     protected $customerResource;
 
     /**
-     * @var \Magenest\SocialLogin\Model\ResourceModel\SocialAccount\CollectionFactory
+     * @var CollectionFactory
      */
     protected $socialAccountCollection;
 
     /**
-     * @var \Magenest\SocialLogin\Model\SocialAccountFactory
+     * @var SocialAccountFactory
      */
     protected $socialAccountModel;
 
     /**
-     * @var \Magenest\SocialLogin\Model\ResourceModel\SocialAccount
+     * @var SocialAccount
      */
     protected $socialAccountResource;
 
     /**
-     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
+     * @var TimezoneInterface
      */
     protected $timezone;
     /**
@@ -124,7 +141,7 @@ class SocialLogin extends AbstractHelper
      */
     protected $clientInstagram;
     /**
-     * @var \Magenest\SocialLogin\Model\Pinterest\Client
+     * @var Client
      */
     protected $clientPinterest;
     /**
@@ -133,9 +150,19 @@ class SocialLogin extends AbstractHelper
     protected $clients = [];
 
     /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     * @var CustomerRepositoryInterface
      */
     protected $customerRepository;
+
+    /**
+     * @var AccountManagement
+     */
+    protected $accountManagement;
+
+    /**
+     * @var MessageManagerInterface
+     */
+    protected $messageManager;
 
     /**
      * SocialLogin constructor.
@@ -149,60 +176,64 @@ class SocialLogin extends AbstractHelper
      * @param \Magenest\SocialLogin\Model\Facebook\Client $clientFacebook
      * @param \Magenest\SocialLogin\Model\Linkedin\Client $clientLinkedin
      * @param \Magenest\SocialLogin\Model\Instagram\Client $clientInstagram
-     * @param \Magenest\SocialLogin\Model\Pinterest\Client $clientPinterest
-     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
-     * @param \Magento\Customer\Model\SessionFactory $customerSession
-     * @param \Magento\Customer\Model\CustomerFactory $customerFactory
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Backend\App\ConfigInterface $config
-     * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
-     * @param \Magento\Customer\Model\Url $customerUrl
+     * @param Client $clientPinterest
+     * @param CustomerRepositoryInterface $customerRepository
+     * @param SessionFactory $customerSession
+     * @param CustomerFactory $customerFactory
+     * @param StoreManagerInterface $storeManager
+     * @param ConfigInterface $config
+     * @param Context $context
+     * @param CookieManagerInterface $cookieManager
+     * @param Url $customerUrl
      * @param \Magento\Customer\Model\ResourceModel\Customer $customerResource
-     * @param \Magenest\SocialLogin\Model\ResourceModel\SocialAccount\CollectionFactory $socialAccountCollection
-     * @param \Magenest\SocialLogin\Model\SocialAccountFactory $socialAccountModel
-     * @param \Magenest\SocialLogin\Model\ResourceModel\SocialAccount $socialAccountResource
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
+     * @param CollectionFactory $socialAccountCollection
+     * @param SocialAccountFactory $socialAccountModel
+     * @param SocialAccount $socialAccountResource
+     * @param TimezoneInterface $timezone
+     * @param AccountManagement $accountManagement
+     * @param MessageManagerInterface $messageManager
      */
     public function __construct(
-        \Magenest\SocialLogin\Model\Line\Client $clientLine,
-        \Magenest\SocialLogin\Model\Zalo\Client $clientZalo,
-        \Magenest\SocialLogin\Model\Apple\Client $clientApple,
-        \Magenest\SocialLogin\Model\Amazon\Client $clientAmazon,
-        \Magenest\SocialLogin\Model\Google\Client $clientGoogle,
-        \Magenest\SocialLogin\Model\Reddit\Client $clientReddit,
-        \Magenest\SocialLogin\Model\Twitter\Client $clientTwitter,
-        \Magenest\SocialLogin\Model\Facebook\Client $clientFacebook,
-        \Magenest\SocialLogin\Model\Linkedin\Client $clientLinkedin,
-        \Magenest\SocialLogin\Model\Instagram\Client $clientInstagram,
-        \Magenest\SocialLogin\Model\Pinterest\Client $clientPinterest,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        SessionFactory $customerSession,
-        CustomerFactory $customerFactory,
-        StoreManagerInterface $storeManager,
-        ConfigInterface $config,
-        Context $context,
-        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
-        \Magento\Customer\Model\Url $customerUrl,
+        \Magenest\SocialLogin\Model\Line\Client        $clientLine,
+        \Magenest\SocialLogin\Model\Zalo\Client        $clientZalo,
+        \Magenest\SocialLogin\Model\Apple\Client       $clientApple,
+        \Magenest\SocialLogin\Model\Amazon\Client      $clientAmazon,
+        \Magenest\SocialLogin\Model\Google\Client      $clientGoogle,
+        \Magenest\SocialLogin\Model\Reddit\Client      $clientReddit,
+        \Magenest\SocialLogin\Model\Twitter\Client     $clientTwitter,
+        \Magenest\SocialLogin\Model\Facebook\Client    $clientFacebook,
+        \Magenest\SocialLogin\Model\Linkedin\Client    $clientLinkedin,
+        \Magenest\SocialLogin\Model\Instagram\Client   $clientInstagram,
+        Client                                         $clientPinterest,
+        CustomerRepositoryInterface                    $customerRepository,
+        SessionFactory                                 $customerSession,
+        CustomerFactory                                $customerFactory,
+        StoreManagerInterface                          $storeManager,
+        ConfigInterface                                $config,
+        Context                                        $context,
+        CookieManagerInterface                         $cookieManager,
+        Url                                            $customerUrl,
         \Magento\Customer\Model\ResourceModel\Customer $customerResource,
-        \Magenest\SocialLogin\Model\ResourceModel\SocialAccount\CollectionFactory $socialAccountCollection,
-        \Magenest\SocialLogin\Model\SocialAccountFactory $socialAccountModel,
-        \Magenest\SocialLogin\Model\ResourceModel\SocialAccount $socialAccountResource,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
+        CollectionFactory                              $socialAccountCollection,
+        SocialAccountFactory                           $socialAccountModel,
+        SocialAccount                                  $socialAccountResource,
+        TimezoneInterface                              $timezone,
+        AccountManagement                              $accountManagement,
+        MessageManagerInterface                        $messageManager
     ) {
-        $this->customerRepository      = $customerRepository;
-        $this->clientAmazon            = $clientAmazon;
-        $this->clientApple             = $clientApple;
-        $this->clientFacebook          = $clientFacebook;
-        $this->clientGoogle            = $clientGoogle;
-        $this->clientInstagram         = $clientInstagram;
-        $this->clientLine              = $clientLine;
-        $this->clientLinkedin          = $clientLinkedin;
-        $this->clientPinterest         = $clientPinterest;
-        $this->clientReddit            = $clientReddit;
-        $this->clientTwitter           = $clientTwitter;
-        $this->clientZalo              = $clientZalo;
-        $this->clients                 = [
+        $this->customerRepository = $customerRepository;
+        $this->clientAmazon = $clientAmazon;
+        $this->clientApple = $clientApple;
+        $this->clientFacebook = $clientFacebook;
+        $this->clientGoogle = $clientGoogle;
+        $this->clientInstagram = $clientInstagram;
+        $this->clientLine = $clientLine;
+        $this->clientLinkedin = $clientLinkedin;
+        $this->clientPinterest = $clientPinterest;
+        $this->clientReddit = $clientReddit;
+        $this->clientTwitter = $clientTwitter;
+        $this->clientZalo = $clientZalo;
+        $this->clients = [
             $clientAmazon,
             $clientApple,
             $clientFacebook,
@@ -215,24 +246,26 @@ class SocialLogin extends AbstractHelper
             $clientTwitter,
             $clientZalo
         ];
-        $this->_config                 = $config;
-        $this->_customerSession        = $customerSession->create();
-        $this->_customerFactory        = $customerFactory;
-        $this->_storeManager           = $storeManager;
-        $this->cookieManager           = $cookieManager;
-        $this->customerUrl             = $customerUrl;
-        $this->customerResource        = $customerResource;
+        $this->_config = $config;
+        $this->_customerSession = $customerSession->create();
+        $this->_customerFactory = $customerFactory;
+        $this->_storeManager = $storeManager;
+        $this->cookieManager = $cookieManager;
+        $this->customerUrl = $customerUrl;
+        $this->customerResource = $customerResource;
         $this->socialAccountCollection = $socialAccountCollection;
-        $this->socialAccountModel      = $socialAccountModel;
-        $this->socialAccountResource   = $socialAccountResource;
-        $this->timezone                = $timezone;
+        $this->socialAccountModel = $socialAccountModel;
+        $this->socialAccountResource = $socialAccountResource;
+        $this->timezone = $timezone;
+        $this->accountManagement = $accountManagement;
+        $this->messageManager = $messageManager;
         parent::__construct($context);
     }
 
     /**
      * Login and save with customer email
      *
-     * @param \Magento\Customer\Model\Customer $customer
+     * @param Customer $customer
      * @param array $data
      */
     public function login($customer, $data)
@@ -245,33 +278,53 @@ class SocialLogin extends AbstractHelper
     }
 
     /**
-     * Create new Customer
-     *
      * @param array $data
+     * @param string $pathConfigConfirmation
+     * @return Customer
+     * @throws AlreadyExistsException
      */
-    public function creatingAccount($data)
+    public function creatingAccount($data, $pathConfigConfirmation): Customer
     {
         $customer = $this->_customerFactory->create();
         try {
             $customerId = $this->customerRepository->get($data['email'])->getId();
-            $this->customerResource->load($customer,$customerId);
+            $this->customerResource->load($customer, $customerId);
+            if ($this->checkConditionConfirmationForSocialLoginFromSecondTime($pathConfigConfirmation, $customer)) {
+                throw new EmailNotConfirmedException(__("You must confirm your account. Please check your email for the confirmation link."));
+            }
             $this->_customerSession->setCustomerAsLoggedIn($customer);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $customer->setData($data);
             $this->customerResource->save($customer);
-            $this->_customerSession->setCustomerAsLoggedIn($customer);
+            if ($this->checkConditionConfirmationForSocialLoginFirstTime($pathConfigConfirmation, $customer)) {
+                try {
+                    // Use this for email template NEW_ACCOUNT_EMAIL_CONFIRMATION of magento
+                    $this->accountManagement->resendConfirmation($customer->getEmail(), $customer->getWebsiteId());
+                    $this->messageManager->addComplexSuccessMessage(
+                        'confirmAccountSuccessMessage',
+                        [
+                            'url' => $this->customerUrl->getEmailConfirmationUrl($customer->getEmail()),
+                        ]
+                    );
+                } catch (Exception $exception) {
+                    $this->_logger->debug($exception->getMessage());
+                }
+            } else {
+                $this->_customerSession->setCustomerAsLoggedIn($customer);
+            }
         }
+        return $customer;
     }
 
     /**
      * @param $data
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
     public function createSocialAccount($data)
     {
         $currentDateTime = $this->timezone->date()->format('Y-m-d H:i:s');
         $socialAccount = $this->socialAccountModel->create();
-        $socialAccount->setCustomerId($this->_customerSession->getCustomerId());
+        $socialAccount->setCustomerId($data['customerId'] ?? null);
         $socialAccount->setSocialLoginId($data['id'] ?? null);
         $socialAccount->setSocialLoginType($data['type'] ?? null);
         $socialAccount->setCreatedAt($currentDateTime);
@@ -283,11 +336,12 @@ class SocialLogin extends AbstractHelper
 
     /**
      * @param $data
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
-    public function updateLastLoginTime($data) {
-        $socialAccountCollection = $this->socialAccountCollection->create()->addFieldToFilter('social_login_id',$data['id'])
-                                                                           ->addFieldToFilter('social_login_type',$data['type']);
+    public function updateLastLoginTime($data)
+    {
+        $socialAccountCollection = $this->socialAccountCollection->create()->addFieldToFilter('social_login_id', $data['id'])
+            ->addFieldToFilter('social_login_type', $data['type']);
         $socialAccount = $socialAccountCollection->getFirstItem();
         $socialAccount->setLastLogin($this->timezone->date()->format('Y-m-d H:i:s'));
         $socialAccount->setExistEmail($data['exist_email'] ?? null);
@@ -297,15 +351,15 @@ class SocialLogin extends AbstractHelper
     /**
      * @param $socialLoginId
      * @param $socialLoginType
-     * @return \Magento\Customer\Model\Customer
+     * @return Customer
      */
     public function getCustomer($socialLoginId, $socialLoginType)
     {
         $socialAccountCollection = $this->socialAccountCollection->create()
-                                                                 ->addFieldToFilter('social_login_id',$socialLoginId)
-                                                                 ->addFieldToFilter('social_login_type',$socialLoginType);
+            ->addFieldToFilter('social_login_id', $socialLoginId)
+            ->addFieldToFilter('social_login_type', $socialLoginType);
         $customer = $this->_customerFactory->create();
-        $this->customerResource->load($customer,$socialAccountCollection->getFirstItem()->getCustomerId());
+        $this->customerResource->load($customer, $socialAccountCollection->getFirstItem()->getCustomerId());
         return $customer;
     }
 
@@ -313,13 +367,13 @@ class SocialLogin extends AbstractHelper
      * Get Customer By Email
      *
      * @param $email
-     * @return \Magento\Customer\Model\Customer
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return Customer
+     * @throws LocalizedException
      */
     public function getCustomerByEmail($email)
     {
         $websiteId = $this->_storeManager->getWebsite()->getId();
-        $customer  = $this->_customerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
+        $customer = $this->_customerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
         return $customer;
     }
 
@@ -336,8 +390,8 @@ class SocialLogin extends AbstractHelper
      */
     public function isButtonEnabledCreateAccount()
     {
-        $displayOn = explode(',',$this->_config->getValue(self::XML_PATH_DISPLAY_ON));
-        return in_array(\Magenest\SocialLogin\Model\Config\DisplayOn::CREATE_ACCOUNT_PAGE,$displayOn);
+        $displayOn = explode(',', $this->_config->getValue(self::XML_PATH_DISPLAY_ON));
+        return in_array(DisplayOn::CREATE_ACCOUNT_PAGE, $displayOn);
     }
 
     /**
@@ -345,8 +399,8 @@ class SocialLogin extends AbstractHelper
      */
     public function isButtonEnabledCheckout()
     {
-        $displayOn = explode(',',$this->_config->getValue(self::XML_PATH_DISPLAY_ON));
-        return in_array(\Magenest\SocialLogin\Model\Config\DisplayOn::CHECKOUT_PAGE,$displayOn);
+        $displayOn = explode(',', $this->_config->getValue(self::XML_PATH_DISPLAY_ON));
+        return in_array(DisplayOn::CHECKOUT_PAGE, $displayOn);
     }
 
     /**
@@ -354,8 +408,8 @@ class SocialLogin extends AbstractHelper
      */
     public function isButtonEnabledCommentProduct()
     {
-        $displayOn = explode(',',$this->_config->getValue(self::XML_PATH_DISPLAY_ON));
-        return in_array(\Magenest\SocialLogin\Model\Config\DisplayOn::COMMENT_PRODUCT,$displayOn);
+        $displayOn = explode(',', $this->_config->getValue(self::XML_PATH_DISPLAY_ON));
+        return in_array(DisplayOn::COMMENT_PRODUCT, $displayOn);
     }
 
     /**
@@ -396,7 +450,7 @@ class SocialLogin extends AbstractHelper
                 $allSocialTypes[] = $client::TYPE_SOCIAL_LOGIN;
             }
         }
-        return  $allSocialTypes;
+        return $allSocialTypes;
     }
 
     /**
@@ -408,7 +462,7 @@ class SocialLogin extends AbstractHelper
         foreach ($this->clients as $client) {
             $allSocialTypes[] = $client::TYPE_SOCIAL_LOGIN;
         }
-        return  $allSocialTypes;
+        return $allSocialTypes;
     }
 
     /**
@@ -421,5 +475,98 @@ class SocialLogin extends AbstractHelper
             $chartColor[$client::TYPE_SOCIAL_LOGIN] = $client::CHART_COLOR;
         }
         return $chartColor;
+    }
+
+    /**
+     * Check if accounts confirmation is required.
+     * Check if accounts confirmation config og Social login module is required.
+     *
+     * @param string $path
+     * @param int|null $websiteId
+     * @param int|null $customerId
+     * @return bool
+     */
+    public function isConfirmationSocialLoginRequired($path, $websiteId, $customerId): bool
+    {
+        if ($this->canSkipConfirmation($customerId)) {
+            return false;
+        }
+
+        return $this->scopeConfig->isSetFlag(
+            $path,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+    }
+
+    /**
+     * Check if accounts confirmation config og customer magento module is required.
+     *
+     * @param int|null $websiteId
+     * @param int|null $customerId
+     * @return bool
+     */
+    public function isConfirmationMagentoLoginRequired($websiteId, $customerId): bool
+    {
+        if ($this->canSkipConfirmation($customerId)) {
+            return false;
+        }
+
+        return $this->scopeConfig->isSetFlag(
+            AccountConfirmation::XML_PATH_IS_CONFIRM,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+    }
+
+    /**
+     * Check whether confirmation may be skipped when registering using certain email address.
+     *
+     * @param int|null $customerId
+     * @return bool
+     */
+    private function canSkipConfirmation($customerId): bool
+    {
+        if (!$customerId) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Function checkConditionConfirmationForSocialLoginFirstTime
+     *
+     * Used for check login confirmation from first time login
+     *
+     * @param string $pathConfigConfirmation
+     * @param Customer $customer
+     * @return bool
+     */
+    public function checkConditionConfirmationForSocialLoginFirstTime($pathConfigConfirmation, $customer): bool
+    {
+        return $this->isConfirmationSocialLoginRequired(
+                $pathConfigConfirmation,
+                $customer->getWebsiteId(),
+                $customer->getId()
+            ) &&
+            $this->isConfirmationMagentoLoginRequired(
+                $customer->getWebsiteId(),
+                $customer->getId()
+            );
+    }
+
+    /**
+     * Function checkConditionConfirmationForSocialLoginFromSecondTime
+     *
+     * Used for check login confirmation from second time login
+     *
+     * @param string $pathConfigConfirmation
+     * @param Customer $customer
+     * @return bool
+     */
+    public function checkConditionConfirmationForSocialLoginFromSecondTime($pathConfigConfirmation, $customer): bool
+    {
+        return $this->checkConditionConfirmationForSocialLoginFirstTime($pathConfigConfirmation, $customer) && $customer->getConfirmation();
     }
 }

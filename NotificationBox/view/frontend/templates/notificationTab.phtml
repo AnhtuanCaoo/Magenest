@@ -1,4 +1,6 @@
 <?php
+use Magenest\NotificationBox\Model\CustomerNotification;
+
 /** @var  $block \Magenest\NotificationBox\Block\Customer\Tab\Notification */
 
 $block->redirectIfNotLoggedIn();
@@ -12,12 +14,12 @@ $allNotificationType = $block->getAllNotificationType();
             <div class="notification-controller">
                 <div class="select_notification">
                     <select id="select_notification">
-                        <option value="select-none"><?=__('None')?></option>
-                        <option value="select-all" id="selectAll"><?=__('All')?></option>
-                        <option value="select-read"><?=__('Read')?></option>
-                        <option value="select-unread"><?=__('Unread')?></option>
-                        <option value="select-important"><?=__('Important')?></option>
-                        <option value="select-unimportant"><?=__('Unimportant')?></option>
+                        <option value="select-none"><?= $block->escapeHtml(__('None'))?></option>
+                        <option value="select-all" id="selectAll"><?= $block->escapeHtml(__('All'))?></option>
+                        <option value="select-read"><?= $block->escapeHtml(__('Read'))?></option>
+                        <option value="select-unread"><?= $block->escapeHtml(__('Unread'))?></option>
+                        <option value="select-important"><?= $block->escapeHtml(__('Important'))?></option>
+                        <option value="select-unimportant"><?= $block->escapeHtml(__('Unimportant'))?></option>
                     </select>
                 </div>
 
@@ -27,76 +29,107 @@ $allNotificationType = $block->getAllNotificationType();
                 <div class="delete-notification"><span class="mgn-noti-icon icon-remove"></span></div>
 
                 <div class="mark-as-read-notification">
-                    <a href="/" onclick="return false;"><?=__('Mark as read')?></a>
+                    <a href="/" onclick="return false;"><?= $block->escapeHtml(__('Mark as read'))?></a>
                 </div>
             </div>
 
-            <div class="listCategory">
-                <?php foreach ($allNotificationType as $key=>$value){?>
+            <div class="list_category">
+                <?php foreach ($allNotificationType as $key => $value) {?>
                     <label>
-                        <input type="button" value="<?= $value ?>" class="category-notification-btn <?=($block->getFilteredNotificationTypes() == $key)?'is_filter':''?>" id='filter-<?=$key?>'>
-                        <span class="category-notification-label"><?= $value ?></span>
+                        <input type="button"
+                               value="<?= $block->escapeHtml($value) ?>"
+                               class="category-notification-btn
+                               <?=($block->getFilteredNotificationTypes() == $key)?'is_filter':''?>"
+                               id='filter-<?=$block->escapeHtml($key)?>'>
+                        <span class="category-notification-label"><?= $block->escapeHtml($value) ?></span>
                     </label>
                 <?php }?>
             </div>
             <div class="notification-selected">
-                <p>All <span id="notification-selected">0</span> <?=__('notification on this page are selected. ')?><span id="select-all-notification" hidden><a href="/" onclick="return false;"><?= __('select all '.count($allCustomerNotification) .' notification on this page') ?> </a></span></p>
+                <p>All <span id="notification-selected">0</span>
+                    <?= $block->escapeHtml(__('notification on this page are selected. '))?>
+                    <span id="select-all-notification" hidden>
+                        <a href="/" onclick="return false;">
+                            <?= $block->escapeHtml(__('select all '.count($allCustomerNotification)
+                                                        .' notification on this page')) ?>
+                        </a>
+                    </span>
+                </p>
             </div>
 
             <table class="data table mgn-notification-table" id="my-notification-table">
-                <caption class="table-caption"><?php echo __('Grid Record') ?></caption>
+                <caption class="table-caption"><?php $block->escapeHtml(__('Grid Record')) ?></caption>
 
                 <tbody>
                 <?php if ($allCustomerNotification && count($allCustomerNotification)): ?>
-                <?php foreach ($allCustomerNotification as $notification):?>
-                    <tr style="background-color: <?= $notification['status'] ? 'transparent' : $unread ?>" id="<?= $notification['entity_id'] ?>">
+                    <?php foreach ($allCustomerNotification as $notification):?>
+                    <tr style="background-color: <?= $notification['status'] ? 'transparent'
+                        : $block->escapeHtml($unread) ?>"
+                        id="<?= $block->escapeHtml($notification['entity_id']) ?>">
                         <td class="col check-box-notification">
                             <label>
-                                <input type="checkbox" class="checkbox-notification-input <?= $notification['entity_id'] ?>" id= "<?= $notification['status'] ? null : $unread ?>"/>
+                                <input type="checkbox"
+                                       class="checkbox-notification-input
+                                       <?= $block->escapeHtml($notification['entity_id']) ?>"
+                                       id= "<?= $notification['status'] ? null : $block->escapeHtml($unread) ?>"/>
                                 <span class="checkbox-notification-label is_select"></span>
                             </label>
                         </td>
                         <td class="col marking-notification">
-                            <?php if($notification['star'] == \Magenest\NotificationBox\Model\CustomerNotification::STAR):
-                                $markingClass = 'active';
+                            <?php if ($notification['star'] == CustomerNotification::STAR):
+                                    $markingClass = 'active';
                             else:
                                 $markingClass = '';
                             endif; ?>
-                            <span id="<?=$notification['star']?>" class="marking-important <?= $markingClass ?>"></span>
+                            <span id="<?= $block->escapeHtml($notification['star'])?>"
+                                  class="marking-important <?= $block->escapeHtml($markingClass) ?>"></span>
                         </td>
 
                         <td class="col notification-image">
-                            <span class="notification-type-img" style="background-image: url('<?= $notification['icon'] ?>')"></span></td>
+                            <span class="notification-type-img"
+                                  style="background-image: url('<?= $block->escapeHtml($notification['icon']) ?>')">
+
+                            </span>
+                        </td>
 
                         <td class="col notification-type">
-                            <?php echo $notification['notification_type'] ?></td>
+                            <?= $block->escapeHtml($notification['notification_type']) ?></td>
 
-                        <td class="col description"><?=$notification['full_description'] ?></td>
+                        <td class="col description"><?= $block->escapeHtml($notification['full_description']) ?></td>
 
-                        <td class="col created-at"><?php echo date('Y-m-d', strtotime($notification['created_at'])); ?></td>
+                        <td class="col created-at">
+                            <?= $block->escapeHtml(date('Y-m-d', strtotime($notification['created_at']))); ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="message info empty"><span><?php echo __('No any notification.'); ?></span></div>
+                    <div class="message info empty">
+                        <span>
+                            <?= $block->escapeHtml(__('No any notification.')); ?>
+                        </span>
+                    </div>
                 <?php endif ?>
                 </tbody>
             </table>
         </div>
     </form>
     <?php if ($block->getPagerHtml()): ?>
-        <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+        <div class="order-products-toolbar toolbar bottom"><?=  $block->getPagerHtml() ?></div>
     <?php endif ?>
 
 <script type="text/x-magento-init">
         {
             "*": {
                 "Magenest_NotificationBox/js/customer/tab/notification": {
-                    "urlDelete":"<?= $block->getUrl('notibox/handleNotification/Delete')?>",
-                    "urlMarkAsRead":"<?= $block->getUrl('notibox/handleNotification/MarkAllAsRead')?>",
-                    "urlMarkImportant":"<?=$block->getUrl("notibox/handleNotification/MarkImportant")?>",
-                    "urlViewNotification":"<?=$block->getUrl('notibox/handleNotification/viewNotification')?>",
-                    "totalNotification": <?=count($allCustomerNotification)?>,
-                    "baseUrl":"<?=$block->getUrl()?>"
+                    "urlDelete":"<?= $block->escapeHtml($block->getUrl('notibox/handleNotification/Delete'))?>",
+                    "urlMarkAsRead":
+                        "<?= $block->escapeHtml($block->getUrl('notibox/handleNotification/MarkAllAsRead'))?>",
+                    "urlMarkImportant":
+                        "<?= $block->escapeHtml($block->getUrl("notibox/handleNotification/MarkImportant"))?>",
+                    "urlViewNotification":
+                        "<?= $block->escapeHtml($block->getUrl('notibox/handleNotification/viewNotification'))?>",
+                    "totalNotification": <?= $block->escapeHtml(count($allCustomerNotification))?>,
+                    "baseUrl":"<?= $block->escapeHtml($block->getUrl())?>"
                 }
             }
         }

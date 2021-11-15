@@ -49,4 +49,17 @@
     <preference for="Magenest\NotificationBox\Api\GetNotificationInterface" type="Magenest\NotificationBox\Model\Api\GetNotification"/>
     <preference for="Magenest\NotificationBox\Api\HandleNotificationInterface" type="Magenest\NotificationBox\Model\Api\HandleNotification"/>
 
+    <type name="Magenest\NotificationBox\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Magenest\NotificationBox\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">magenest_notification_box</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Magenest\NotificationBox\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

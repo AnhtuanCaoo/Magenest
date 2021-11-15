@@ -3,12 +3,12 @@ namespace Magenest\NotificationBox\Block\Adminhtml\System\Config;
 
 class Color extends \Magento\Config\Block\System\Config\Form\Field
 {
-    public function __construct(
-        \Magento\Backend\Block\Template\Context $context, array $data = []
-    ) {
-        parent::__construct($context, $data);
-    }
-
+    /**
+     * Get element html
+     *
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @return string
+     */
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         $html  = $element->getElementHtml();

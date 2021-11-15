@@ -37,7 +37,7 @@ class Amazon extends \Magento\Framework\View\Element\Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientAmazon->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'amazon']);
     }
 
     /**

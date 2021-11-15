@@ -1,0 +1,32 @@
+<table>
+    <tr>
+        <th>User ID</th>
+        <th>User email</th>
+        <th>Product ID</th>
+        <th>Product SKU</th>
+        <th>Category ID</th>
+        <th>Count view</th>
+    </tr>
+<?php
+foreach($block->getProduct() as $item) { ?>
+    <tr>
+        <td><?php if($item->getData('user_id') == null){
+                echo 'Guest';
+            } else {
+                echo $item->getData('user_id');
+            }?>
+            </td>
+        <td><?php echo $item->getData('email') ?></td>
+        <td><?php echo $item->getData('product_id') ?></td>
+        <td><?php echo $item->getData('sku') ?></td>
+        <td><?php
+            $product = $block->getProductDetail($item->getData('product_id'));
+            foreach($product->getData('category_ids') as $value){ ?>
+                <div><?php echo $value ?></div>
+            <?php } ?>
+        </td>
+        <td><?php echo $item->getData('count_view') ?></td>
+    </tr>
+<?php } ?>
+</table>
+

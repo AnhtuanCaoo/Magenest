@@ -37,7 +37,7 @@ class Pinterest extends \Magento\Framework\View\Element\Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientPinterest->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'pinterest']);
     }
 
     /**

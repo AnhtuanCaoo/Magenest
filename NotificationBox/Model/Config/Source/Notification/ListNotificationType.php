@@ -11,6 +11,8 @@ class ListNotificationType implements ArrayInterface
     protected $store;
 
     /**
+     * Construct
+     *
      * @param StoreManagerInterface $storeManage
      */
     public function __construct(StoreManagerInterface $storeManage)
@@ -19,14 +21,15 @@ class ListNotificationType implements ArrayInterface
     }
 
     /**
+     * Option for notification type
+     *
      * @return array
      */
     public function toOptionArray()
     {
         $options = [];
         $listStore= $this->store->getGroups();
-        foreach ($listStore as $store)
-        {
+        foreach ($listStore as $store) {
             $options[] = ['value' => $store->getId(), 'label' => $store->getName()];
         }
         return $options;

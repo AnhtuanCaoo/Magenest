@@ -19,4 +19,9 @@
         <plugin name="Change_Product_Image_In_Minicart" type="Magenest\Checkout\Plugin\Minicart\Image" sortOrder="1"/>
 
     </type>
+    <preference for="Magento\Checkout\Block\Cart\Item\Renderer" type="Magenest\Checkout\Block\Cart\Item\Renderer"/>
+    <type name="Magento\OfflinePayments\Model\Cashondelivery">
+        <plugin sortOrder="1" name="engravingServices"
+                type="Magenest\Checkout\Plugin\PaymentMethod\CashOnDeliveryConfig"/>
+    </type>
 </config>

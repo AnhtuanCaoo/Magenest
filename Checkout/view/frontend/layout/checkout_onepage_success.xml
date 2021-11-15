@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="order.success.additional.info">
+            <block class="Magento\Checkout\Block\Onepage\Success" name="custom.order.success"
+                   template="Magenest_Checkout::order/success.phtml" ifconfig="checkout/sucess_page/show_order_information" after="-">
+            </block>
+            <block class="Magenest\Checkout\Block\Onepage\Success\OrderInformation" name="custom.order.info"
+                   template="Magenest_Checkout::order/info.phtml" ifconfig="checkout/sucess_page/show_order_information" after="custom.order.success">
+            </block>
+        </referenceContainer>
+    </body>
+</page>

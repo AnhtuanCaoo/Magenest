@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\HandleNotification;
+
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\View\Result\PageFactory;
@@ -20,6 +21,8 @@ class ViewNotification extends Action
     protected $customerNotificationResource;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param PageFactory $resultPageFactory
      * @param CustomerNotificationFactory $customerNotificationFactory
@@ -36,16 +39,19 @@ class ViewNotification extends Action
         $this->customerNotificationResource = $customerNotificationResource;
         $this->resultPageFactory            = $resultPageFactory;
     }
+    /**
+     * Save status
+     */
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
         $params = $this->getRequest()->getParams();
         $notificationId = $params['id'];
         $notificationModel = $this->customerNotificationFactory->create();
-        $this->customerNotificationResource->load($notificationModel,$notificationId);
+        $this->customerNotificationResource->load($notificationModel, $notificationId);
         $url = $notificationModel['redirect_url'];
-        if(!$notificationModel->getStatus()){
-            $notificationModel->setData('status',CustomerNotificationModel::STATUS_READ);
+        if (!$notificationModel->getStatus()) {
+            $notificationModel->setData('status', CustomerNotificationModel::STATUS_READ);
             $this->customerNotificationResource->save($notificationModel);
         }
         $resultRedirect->setUrl($url);

@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\HandleNotification;
+
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -12,7 +13,7 @@ class HandleConfirmBox extends Action
 {
 
     /** @var JsonFactory  */
-    protected  $resultJsonFactory;
+    protected $resultJsonFactory;
 
     /** @var Repository  */
     protected $repository;
@@ -22,9 +23,9 @@ class HandleConfirmBox extends Action
 
     /** @var StoreManagerInterface  */
     protected $storeManagerInterface;
-
-
     /**
+     * Construct
+     *
      * @param StoreManagerInterface $storeManagerInterface
      * @param Repository $repository
      * @param Context $context
@@ -37,8 +38,7 @@ class HandleConfirmBox extends Action
         Context $context,
         JsonFactory $resultJsonFactory,
         Helper $helper
-    )
-    {
+    ) {
         $this->storeManagerInterface    = $storeManagerInterface;
         $this->helper                   = $helper;
         $this->repository               = $repository;
@@ -46,7 +46,9 @@ class HandleConfirmBox extends Action
         parent::__construct($context);
     }
 
-    /** save customer Token */
+    /**
+     * Save customer Token
+     */
     public function execute()
     {
         $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -58,19 +60,18 @@ class HandleConfirmBox extends Action
             $contentPopup = $this->helper->getContentPopup();
             $askCustomersToAllowWebPushSubscriptions = $this->helper->getAllowWebPush();
             $urlFirebase = $this->storeManagerInterface->getStore()->getBaseUrl().'pub/firebase-messaging-sw.js';
-            $urlFirebase = str_replace('/'.$this->storeManagerInterface->getStore()->getCode().'/','', $urlFirebase);
+            $urlFirebase = str_replace('/'.$this->storeManagerInterface->getStore()->getCode().'/', '', $urlFirebase);
             $data = [
-                'time'=>$time*1000,
-                'timeShowPopup'=>$timeShowPopup*1000,
-                'senderId' =>$senderId,
-                'askAllowSubscription' =>$askAllowSubscription,
+                'time' => $time*1000,
+                'timeShowPopup' => $timeShowPopup*1000,
+                'senderId' => $senderId,
+                'askAllowSubscription' => $askAllowSubscription,
                 'contentPopup' => $contentPopup,
                 'askCustomersToAllowWebPushSubscriptions' => $askCustomersToAllowWebPushSubscriptions,
-                'urlFirebase'=>$urlFirebase
+                'urlFirebase'=> $urlFirebase
             ];
             return $result->setData($data);
-        }
-        catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return $result->setData("fail");
         }
     }

@@ -1,0 +1,18 @@
+<?php
+/** @var $block \Magenest\GoogleShopping\Block\Adminhtml\Category\Edit */
+?>
+<script type="text/x-magento-init">
+    <?php echo $block->getJsConfig(); ?>
+</script>
+<script type="text/javascript">
+    var _autocompleteUrl = '<?php echo $block->getUrl('googleshopping/category/search') ?>';
+    // we disabled mutation observers that used in ui/../lib/dom-observer.js for prevent slow rendering if we have many categories
+    window.MutationObserver = function () {
+        this.observe = function () {
+
+        }
+    }
+</script>
+<div id="dynamic-category" data-bind="scope: 'dynamic_category'" style="clear: both;">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+</div>

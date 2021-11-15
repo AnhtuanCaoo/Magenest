@@ -51,6 +51,15 @@
                         </depends>
                         <attribute type="readonly">readonly</attribute>
                     </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
 
                 <group id="facebook" translate="label" type="text" sortOrder="20" showInDefault="1"
@@ -87,6 +96,15 @@
                             <field id="enabled">1</field>
                         </depends>
                         <attribute type="readonly">readonly</attribute>
+                    </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>
                 </group>
 
@@ -125,6 +143,15 @@
                         </depends>
                         <attribute type="readonly">readonly</attribute>
                     </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
 
                 <group id="linkedin" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0"
@@ -162,6 +189,15 @@
                         </depends>
                         <attribute type="readonly">readonly</attribute>
                     </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
 
                 <group id="pinterest" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0"
@@ -197,6 +233,15 @@
                             <field id="enabled">1</field>
                         </depends>
                         <attribute type="readonly">readonly</attribute>
+                    </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>
                 </group>
 
@@ -235,6 +280,15 @@
                         </depends>
                         <attribute type="readonly">readonly</attribute>
                     </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
 
                 <group id="reddit" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="0"
@@ -272,6 +326,15 @@
                         </depends>
                         <attribute type="readonly">readonly</attribute>
                     </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
 
                 <group id="amazon" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="0"
@@ -308,6 +371,15 @@
                             <field id="enabled">1</field>
                         </depends>
                         <attribute type="readonly">readonly</attribute>
+                    </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>
                 </group>
                 <group id="zalo" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0"
@@ -397,6 +469,15 @@
                             <field id="enabled">1</field>
                         </depends>
                         <attribute type="readonly">readonly</attribute>
+                    </field>
+                    <field id="is_confirmation_required" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                           showInWebsite="1" canRestore="1">
+                        <label>Require Emails Confirmation</label>
+                        <depends>
+                            <field id="enabled">1</field>
+                        </depends>
+                        <comment><model>Magenest\SocialLogin\Model\CommentConfirmationRequired</model></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>
                 </group>
 

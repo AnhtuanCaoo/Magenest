@@ -10,19 +10,22 @@ class ListCustomerGroup implements \Magento\Framework\Option\ArrayInterface
     protected $helper;
 
     /**
+     * Construct
+     *
      * @param Helper $helper
      */
     public function __construct(Helper $helper)
     {
         $this->helper = $helper;
     }
-
+    /**
+     * Customer group options
+     */
     public function toOptionArray()
     {
         $listCustomerGroup =[];
         $customerGroup = $this->helper->getCustomerGroups();
-        foreach ($customerGroup as $customer)
-        {
+        foreach ($customerGroup as $customer) {
             $listCustomerGroup[]= ['label'=>$customer['label'],'value'=> $customer['value']];
         }
         return $listCustomerGroup;

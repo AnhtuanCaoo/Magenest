@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Magenest_Forum::Forum"
+            title="Forum"
+            module="Magenest_Forum"
+            sortOrder="1"
+            resource="Magenest_Forum::Forum"
+        />
+        <add
+            id="Magenest_Forum::blog"
+            title="Blog"
+            module="Magenest_Forum"
+            sortOrder="1"
+            parent="Magenest_Forum::Forum"
+            action="forum/index/index"
+            resource="Magenest_Forum::blog"
+        />
+        <add
+            id="Magenest_Forum::comment"
+            title="Comment"
+            module="Magenest_Forum"
+            sortOrder="1"
+            parent="Magenest_Forum::Forum"
+            action="forum/comment/index"
+            resource="Magenest_Forum::comment"
+        />
+
+    </menu>
+</config>

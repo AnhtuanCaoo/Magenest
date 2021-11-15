@@ -59,13 +59,11 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         }
         $items = $this->collection->getItems();
         foreach ($items as $model) {
-            if(isset($model->getData()['icon']))
-            {
-                try
-                {
-                    $model->setData('icon',$this->serialize->unserialize($model->getIcon()));
-                }catch (\Exception $e){
-                    $model->setData('icon','');
+            if (isset($model->getData()['icon'])) {
+                try {
+                    $model->setData('icon', $this->serialize->unserialize($model->getIcon()));
+                } catch (\Exception $e) {
+                    $model->setData('icon', '');
                 }
             }
             $this->loadedData[$model->getEntityId()] = $model->getData();

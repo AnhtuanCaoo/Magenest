@@ -47,8 +47,10 @@ class Notification extends Column
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item['id'])) {
                     $item[$this->getData('name')]['edit'] = [
-                        'href' => $this->_urlBuilder->getUrl("notibox/notification/newAction",
-                            ['id' => $item['id']]),
+                        'href' => $this->_urlBuilder->getUrl(
+                            "notibox/notification/newAction",
+                            ['id' => $item['id']]
+                        ),
                         'label' => __('Edit'),
                     ];
                 }

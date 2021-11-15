@@ -11,6 +11,8 @@ class ViewNotificationByType extends Action
     protected $resultPageFactory;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param PageFactory $resultPageFactory
      */
@@ -21,16 +23,17 @@ class ViewNotificationByType extends Action
         parent::__construct($context);
         $this->resultPageFactory            = $resultPageFactory;
     }
+    /**
+     * Execute
+     */
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
         $params = $this->getRequest()->getParams();
 
-        if(isset($params['url']) && isset($params['id']))
-        {
+        if (isset($params['url']) && isset($params['id'])) {
             $url = $params['url'].$params['id'];
-        }
-        else{
+        } else {
             $url = $this->_url->getUrl("notibox/customer/notification");
         }
         $resultRedirect->setPath($url);

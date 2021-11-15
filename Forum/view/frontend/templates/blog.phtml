@@ -1,0 +1,28 @@
+<?php
+/**
+ * @var \Magenest\Forum\Block\Blog $block
+ */
+$blog = $block->getBlog();
+$url = $block->getBaseUrl();
+foreach ($blog as $item) { ?>
+    <div class="container-recent-blog-list" style="display: flex; margin-top: 20px;">
+        <img id="img-blog" width="250px" height="250px" src="<?php echo($block->handleImage($item->getData('image'))) ?>"/>
+        <div class="container-inform-blog-list">
+            <a href="<?php echo $url ?>forum/index/view/<?php echo($item->getData('post_id')) ?>" id="blog-title"><?php echo($item->getData('title')) ?></a>
+            <div style="display: flex; margin-top: 10px; ">
+                <a style="margin-right: 5px;"><?php echo($item->getData('firstname').' ') ?><?php echo($item->getData('lastname')) ?></a>
+                <div>-</div>
+                <div style="margin-left: 5px;"><?php echo($block->handleDate($item->getData('created_at'))) ?></div>
+            </div>
+            <div style="padding-top: 10px"><?php echo($item->getData('description')) ?></div>
+            <button class="read-more">Read more</button>
+            <div style="color:grey"><?= $block->escapeHtml(__('Last updated: ')).$block->escapeHtml($block->handleDate($item->getData('update_at'))) ?></div>
+        </div>
+    </div>
+
+<?php } ?>
+<style>
+    .container-recent-blog-list{
+        width: 130%;
+    }
+</style>

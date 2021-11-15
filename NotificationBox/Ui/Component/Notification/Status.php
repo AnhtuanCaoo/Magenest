@@ -5,6 +5,8 @@ namespace Magenest\NotificationBox\Ui\Component\Notification;
 class Status implements \Magento\Framework\Option\ArrayInterface
 {
     /**
+     * Status options
+     *
      * @return array
      */
     public function toOptionArray()

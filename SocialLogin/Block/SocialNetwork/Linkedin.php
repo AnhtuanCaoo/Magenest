@@ -32,7 +32,7 @@ class Linkedin extends Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientLinkedin->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'linkedin']);
     }
     /**
      * @return Bool

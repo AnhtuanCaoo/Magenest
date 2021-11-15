@@ -57,6 +57,7 @@ define(['jquery'], function () {
                 linkedin: true,
                 pinterest: true,
                 reddit: true,
+                line: true,
                 position: "bottom",
                 speed: 100
             },
@@ -82,8 +83,8 @@ define(['jquery'], function () {
                     facebookTemplate = '<li><a class="hideshare-facebook" href="#"><div class="facebook-share"></div></a></li>',
                     linkedinTemplate = '<li><a class="hideshare-linkedin" href="#"><div class="linkedin-share"></div></a></li>',
                     pinterestTemplate = '<li><a class="hideshare-pinterest" href="#" data-pin-do="buttonPin" data-pin-config="above"><div class="pinterest-share"></div></a></li>',
-                    redditTemplate = '<li><a class="hideshare-reddit" href="#"><div class="reddit-share"></div></a></li>';
-
+                    redditTemplate = '<li><a class="hideshare-reddit" href="#"><div class="reddit-share"></div></a></li>',
+                    lineTemplate = '<li><a class="hideshare-line" href="#"><div class="line-share"></div></a></li>'
                 if (this.config.twitter) {
                     output = twitterTemplate;
                     liWidth += 45;
@@ -98,7 +99,7 @@ define(['jquery'], function () {
                     output = output;
                     liWidth = liWidth;
                 }
-                
+
                 if (this.config.linkedin) {
                     output += linkedinTemplate;
                     liWidth += 45;
@@ -117,6 +118,14 @@ define(['jquery'], function () {
 
                 if (this.config.reddit) {
                     output += redditTemplate;
+                    liWidth += 45;
+                } else {
+                    output = output;
+                    liWidth = liWidth;
+                }
+
+                if (this.config.line) {
+                    output += lineTemplate;
                     liWidth += 45;
                 } else {
                     output = output;
@@ -183,25 +192,12 @@ define(['jquery'], function () {
                     $wrap.find(".hideshare-list").animate(styles, speed).removeClass("shown");
                 };
 
-                // Toggle sharing on button click
-                //   this.$elem.click(function (e) {
-                //       var $wrap = $(e.currentTarget).parent();
-                //       var list = $wrap.find(".hideshare-list");
-                //       if (list.hasClass("shown")) {
-                //           returnPlacement(transition, $wrap);
-                //       } else {
-                //           getPlacement(placement, width, height, transition, $wrap);
-                //       }
-                //       return false;
-                //   });
-
-
                 // SHARING FUNCTIONS
                 var shareTwitter = function () {
                     window.open('https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent(shareLink) + '&text=' + encodeURIComponent(shareTitle) + '%20' + encodeURIComponent(shareLink), 'Twitter', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
                 };
                 var shareFacebook = function () {
-                    window.open('//www.facebook.com/share.php?m2w&s=100&p[url]=' + encodeURIComponent(shareLink) + '&p[images][0]=' + encodeURIComponent(shareMedia) + '&p[title]=' + encodeURIComponent(shareTitle) + '&p[summary]=' + encodeURIComponent(shareDescription), 'Facebook', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
+                    window.open('https://www.facebook.com/sharer/sharer.php?kid_directed_site=0&sdk=joey&u=' + encodeURIComponent(shareLink) + '&display=popup&ref=plugin&src=share_button', 'Facebook', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
                 };
                 var shareLinkedIn = function () {
                     window.open('//www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(shareLink) + '&title=' + encodeURIComponent(shareTitle) + '&source=' + encodeURIComponent(shareLink), 'LinkedIn', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
@@ -211,6 +207,9 @@ define(['jquery'], function () {
                 };
                 var shareReddit = function () {
                     window.open('https://www.reddit.com/submit?url=' + encodeURIComponent(shareLink) + '&title=' + encodeURIComponent(shareTitle)  + '%20' + encodeURIComponent(shareLink), 'Reddit', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
+                };
+                var shareLine = function () {
+                    window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(shareLink), 'Line', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
                 };
 
                 this.$wrap.find(".hideshare-twitter").click(function () {
@@ -235,6 +234,10 @@ define(['jquery'], function () {
 
                 this.$wrap.find(".hideshare-reddit").click(function () {
                     shareReddit();
+                    return false;
+                });
+                this.$wrap.find(".hideshare-line").click(function () {
+                    shareLine();
                     return false;
                 });
 

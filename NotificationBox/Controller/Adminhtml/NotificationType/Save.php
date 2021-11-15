@@ -10,7 +10,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Class Save
- * @package Magenest\InstagramShop\Controller\Adminhtml\Hotspot
+ * Magenest\InstagramShop\Controller\Adminhtml\Hotspot
  */
 class Save extends \Magento\Backend\App\Action
 {
@@ -24,6 +24,8 @@ class Save extends \Magento\Backend\App\Action
     protected $serialize;
 
     /**
+     * Construct
+     *
      * @param Action\Context $context
      * @param NotificationTypeFactory $notificationTypeFactory
      * @param NotificationType $notificationType
@@ -34,8 +36,7 @@ class Save extends \Magento\Backend\App\Action
         NotificationTypeFactory $notificationTypeFactory,
         NotificationType $notificationType,
         Json $serialize
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
         $this->notificationType= $notificationType;
@@ -51,7 +52,6 @@ class Save extends \Magento\Backend\App\Action
     public function execute()
     {
         try {
-            /** @var Redirect $resultRedirect */
             $resultRedirect = $this->resultRedirectFactory->create();
             $data           = $this->getRequest()->getPostValue();
             if ($data) {
@@ -60,7 +60,6 @@ class Save extends \Magento\Backend\App\Action
                 $this->notificationType->load($model, $id);
                 if (isset($data['icon'])) {
                     $data['icon'] = $this->serialize->serialize($data['icon']);
-                    //$model->setData($data);
                 }
                 unset($data['form_key']);
                 unset($data['entity_id']);
@@ -78,6 +77,9 @@ class Save extends \Magento\Backend\App\Action
         }
         return $resultRedirect->setPath('*/*/');
     }
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification_type');

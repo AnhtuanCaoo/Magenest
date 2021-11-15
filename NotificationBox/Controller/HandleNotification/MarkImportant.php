@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\HandleNotification;
+
 use Magento\Framework\App\Action\Action;
 use Magenest\NotificationBox\Helper\Helper;
 use Magento\Framework\App\Action\Context;
@@ -15,7 +16,7 @@ class MarkImportant extends Action
     protected $helper;
 
     /** @var JsonFactory  */
-    protected  $resultJsonFactory;
+    protected $resultJsonFactory;
 
     /** @var CollectionFactory  */
     protected $collectionFactory;
@@ -27,6 +28,8 @@ class MarkImportant extends Action
     protected $customerNotificationFactory;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param Helper $helper
      * @param JsonFactory $resultJsonFactory
@@ -41,8 +44,7 @@ class MarkImportant extends Action
         CollectionFactory $collectionFactory,
         CustomerNotification $customerNotification,
         CustomerNotificationFactory  $customerNotificationFactory
-    )
-    {
+    ) {
         $this->customerNotificationFactory  = $customerNotificationFactory;
         $this->customerNotification         = $customerNotification;
         $this->collectionFactory            = $collectionFactory;
@@ -51,33 +53,34 @@ class MarkImportant extends Action
         parent::__construct($context);
     }
 
-    /** save customer Token */
+    /**
+     * Save customer Token
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
         $params = $this->getRequest()->getParams();
         $id = isset($params['id'])?$params['id']:null;
         $notification = $this->customerNotificationFactory->create();
-        $this->customerNotification->load($notification,$id);
-        if(isset($params['changeColorNotification']) && $params['changeColorNotification'] == "changeColorNotification"){
+        $this->customerNotification->load($notification, $id);
+        if (isset($params['changeColorNotification'])
+            && $params['changeColorNotification'] == "changeColorNotification") {
             try {
-                if($notification->getStatus() == CustomerNotificationModel::STATUS_UNREAD){
-                    $notification->setData('status',CustomerNotificationModel::STATUS_READ);
+                if ($notification->getStatus() == CustomerNotificationModel::STATUS_UNREAD) {
+                    $notification->setData('status', CustomerNotificationModel::STATUS_READ);
                     $this->customerNotification->save($notification);
                 }
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 return $result->setData("fail");
             }
         }
         $customerId = $this->helper->getCustomerId();
-        if($customerId && isset($params['important'])){
+        if ($customerId && isset($params['important'])) {
             try {
                 $important = $params['important'];
-                $notification->setData('star',$important);
+                $notification->setData('star', $important);
                 $this->customerNotification->save($notification);
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 return $result->setData("fail");
             }
         }

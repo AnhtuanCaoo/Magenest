@@ -49,7 +49,7 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
         NotificationFactory $notificationFactory,
         Filter $filter,
         Context $context
-    ){
+    ) {
         $this->collectionFactory = $collectionFactory;
         $this->notificationResource = $notificationResource;
         $this->notificationFactory = $notificationFactory;
@@ -82,7 +82,9 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
      * @return ResponseInterface|ResultInterface
      */
     abstract protected function massAction(AbstractCollection $collection);
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification');

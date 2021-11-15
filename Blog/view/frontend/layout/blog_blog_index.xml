@@ -5,7 +5,7 @@
         <title>Magenest Blog</title>
 
     </head>
-    <body >
+    <body>
         <referenceContainer name="content">
             <block class="Magenest\Blog\Block\Blog" name="blog" template="Magenest_Blog::blog.phtml" />
         </referenceContainer>

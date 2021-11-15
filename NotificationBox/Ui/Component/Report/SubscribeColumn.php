@@ -12,7 +12,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class Image
- * @package Magenest\NotificationBox\Ui\Component\Listing\Columns
+ * Magenest\NotificationBox\Ui\Component\Listing\Columns
  */
 class SubscribeColumn extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -42,7 +42,6 @@ class SubscribeColumn extends \Magento\Ui\Component\Listing\Columns\Column
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = []
-
     ) {
         $this->storeManager    = $storeManager;
         $this->customerFactory = $customerFactory;
@@ -51,6 +50,8 @@ class SubscribeColumn extends \Magento\Ui\Component\Listing\Columns\Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      * @throws NoSuchEntityException
@@ -59,20 +60,18 @@ class SubscribeColumn extends \Magento\Ui\Component\Listing\Columns\Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as $key => $item) {
-                if(isset($item['store_id'])){
+                if (isset($item['store_id'])) {
                     $storeData = $this->storeManager->getStore($item['store_id']);
                     $storeName = $storeData->getName();
-                }
-                else{
+                } else {
                     $storeName = "";
                 }
                 $dataSource['data']['items'][$key]['store_id'] = $storeName;
 
-                if(isset($item['status'])){
-                    if($item['status'] == CustomerToken::STATUS_SUBSCRIBED ){
+                if (isset($item['status'])) {
+                    if ($item['status'] == CustomerToken::STATUS_SUBSCRIBED) {
                         $item['status'] = CustomerToken::STATUS_SUBSCRIBED_LABEL;
-                    }
-                    else{
+                    } else {
                         $item['status'] = CustomerToken::STATUS_UNSUBSCRIBED_LABEL;
                     }
                 }

@@ -44,8 +44,13 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
      * @param CustomerTokenResource $customerTokenResource
      * @param CustomerTokenFactory $customerTokenFactory
      */
-    public function __construct(Action\Context $context,CollectionFactory $collectionFactory,Filter $filter,CustomerTokenResource $customerTokenResource,CustomerTokenFactory $customerTokenFactory )
-    {
+    public function __construct(
+        Action\Context $context,
+        CollectionFactory $collectionFactory,
+        Filter $filter,
+        CustomerTokenResource $customerTokenResource,
+        CustomerTokenFactory $customerTokenFactory
+    ) {
         $this->filter = $filter;
         $this->customerTokenResource = $customerTokenResource;
         $this->customerTokenFactory = $customerTokenFactory;
@@ -79,7 +84,9 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
      * @return ResponseInterface|ResultInterface
      */
     abstract protected function massAction(AbstractCollection $collection);
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::report');

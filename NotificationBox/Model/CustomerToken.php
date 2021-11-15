@@ -11,11 +11,18 @@ class CustomerToken extends AbstractModel
     const STATUS_UNSUBSCRIBED_LABEL = 'Unsubscribed';
     const IS_ACTIVE = 1;
     const IS_NOT_ACTIVE = 0;
+    /**
+     * Init model
+     */
     protected function _construct()
     {
-        $this->_init('Magenest\NotificationBox\Model\ResourceModel\CustomerToken');
+        $this->_init(\Magenest\NotificationBox\Model\ResourceModel\CustomerToken::class);
     }
-    public function updateMultiRecord(){
+    /**
+     * Update multi record
+     */
+    public function updateMultiRecord()
+    {
         $allCustomerToken = $this->getCollection();
         foreach ($allCustomerToken as $token) {
             try {

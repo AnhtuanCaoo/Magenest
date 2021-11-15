@@ -39,7 +39,7 @@ class Apple extends Template
      */
     public function getButtonUrl()
     {
-        return $this->clientApple->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'apple']);
     }
 
     /**

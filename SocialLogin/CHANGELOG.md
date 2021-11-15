@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this extension will be documented in this file.
-This extension adheres to [Magenest](http://magenest.com/).
+This extension adheres to [Magenest].
+
+## [2.4.2] - 2021-10-01
+1. Add require emails confirmation feature
+
+## [2.4.1] - 2021-09-21
+1. Add Share via Line
+2. Compatible latest magento version
+3. Fix small bug with login via apple
 
 ## [2.4.0] - 2021-07-13
 1. Update layout configuration

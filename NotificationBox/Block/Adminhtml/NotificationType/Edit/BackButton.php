@@ -7,6 +7,8 @@ class BackButton extends GenericButton implements ButtonProviderInterface
 {
 
     /**
+     * Get button data
+     *
      * @return array
      */
     public function getButtonData()

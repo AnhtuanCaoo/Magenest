@@ -3,10 +3,13 @@ namespace Magenest\NotificationBox\Api;
 
 /**
  * Interface GetNotificationInterface
- * @package Magenest\NotificationBox\Api
+ * Magenest\NotificationBox\Api
  */
-interface GetNotificationInterface {
+interface GetNotificationInterface
+{
     /**
+     * Get customer notification
+     *
      * @param int $customerId
      * @return array
      */

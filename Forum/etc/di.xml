@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="forum_post_listing_data_source" xsi:type="string">forum_post_collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="forum_post_collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magenest_forum_post</argument>
+            <argument name="resourceModel" xsi:type="string">Magenest\Forum\Model\ResourceModel\Post</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magenest\Forum\Block\Blog">
+        <arguments>
+            <argument name="templateProcessor" xsi:type="object">Magento\Widget\Model\Template\Filter</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="forum_comment_listing_data_source" xsi:type="string">comment_post_collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="comment_post_collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magenest_forum_comment</argument>
+            <argument name="resourceModel" xsi:type="string">Magenest\Forum\Model\ResourceModel\Comment</argument>
+        </arguments>
+    </virtualType>
+</config>

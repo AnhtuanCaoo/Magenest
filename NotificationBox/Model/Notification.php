@@ -21,8 +21,11 @@ class Notification extends AbstractModel
     const CUSTOMER_NOT_LOGGER_IN = 0;
     const ALL_STORE_VIEWS = 0;
 
+    /**
+     * Init model
+     */
     protected function _construct()
     {
-        $this->_init('Magenest\NotificationBox\Model\ResourceModel\Notification');
+        $this->_init(\Magenest\NotificationBox\Model\ResourceModel\Notification::class);
     }
 }

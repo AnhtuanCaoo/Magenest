@@ -12,11 +12,11 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Controller\ResultFactory;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 
 /**
  * Class Uploads
- * @package Magenest\Ticket\Controller\Adminhtml\Template
+ * Magenest\Ticket\Controller\Adminhtml\Template
  */
 class Upload extends \Magento\Backend\App\Action
 {
@@ -41,7 +41,7 @@ class Upload extends \Magento\Backend\App\Action
     protected $filesystem;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     protected $logger;
 
@@ -52,7 +52,7 @@ class Upload extends \Magento\Backend\App\Action
      * @param UploaderFactory $uploaderFactory
      * @param Filesystem $filesystem
      * @param StoreManagerInterface $storeManager
-     * @param LoggerInterface $loggerInterface
+     * @param Logger $logger
      * @param Database $coreFileStorageDatabase
      */
     public function __construct(
@@ -60,55 +60,59 @@ class Upload extends \Magento\Backend\App\Action
         UploaderFactory $uploaderFactory,
         Filesystem $filesystem,
         StoreManagerInterface $storeManager,
-        LoggerInterface $loggerInterface,
+        Logger $logger,
         Database $coreFileStorageDatabase
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->filesystem              = $filesystem;
         $this->uploaderFactory         = $uploaderFactory;
         $this->coreFileStorageDatabase = $coreFileStorageDatabase;
         $this->storeManager            = $storeManager;
-        $this->logger                  = $loggerInterface;
+        $this->logger                  = $logger;
     }
 
     /**
      * Upload file controller action
+     *
      * @return ResultInterface
      */
 
     public function execute()
     {
         $files = $this->getRequest()->getFiles();
-        if (isset($files['image'])){
+        if (isset($files['image'])) {
             $background['icon'] = $files['image'];
         }
-        if (isset($files['icon'])){
+        if (isset($files['icon'])) {
             $background['icon'] = $files['icon'];
         }
 
-        if (isset($background))
+        if (isset($background)) {
             try {
                 $result           = $this->saveBackground($background['icon']);
                 $result['cookie'] = [
-                    'name'     => $this->_getSession()->getName(),
-                    'value'    => $this->_getSession()->getSessionId(),
-                    'lifetime' => $this->_getSession()->getCookieLifetime(),
-                    'path'     => $this->_getSession()->getCookiePath(),
-                    'domain'   => $this->_getSession()->getCookieDomain(),
+                'name'     => $this->_getSession()->getName(),
+                'value'    => $this->_getSession()->getSessionId(),
+                'lifetime' => $this->_getSession()->getCookieLifetime(),
+                'path'     => $this->_getSession()->getCookiePath(),
+                'domain'   => $this->_getSession()->getCookieDomain(),
                 ];
             } catch (Exception $e) {
                 $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
             }
-        if (empty($result))
+        }
+        if (empty($result)) {
             $result = ['error' => 'Image not found'];
+        }
 
         return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
     }
 
     /**
-     * @param $path
-     * @param $imageName
+     * Get file path
+     *
+     * @param string $path
+     * @param string $imageName
      *
      * @return string
      */
@@ -118,7 +122,9 @@ class Upload extends \Magento\Backend\App\Action
     }
 
     /**
-     * @param $files
+     * Save background
+     *
+     * @param string $files
      *
      * @return array
      * @throws Exception
@@ -167,7 +173,9 @@ class Upload extends \Magento\Backend\App\Action
 
         return $result;
     }
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification_type');

@@ -1,0 +1,40 @@
+<div style="padding-bottom:10px; font-size: 18px"> Recent Blogs</div>
+<br>
+<?php
+/**
+ * @var \Magenest\Forum\Block\Blog $block
+ */
+$url = $block->getBaseUrl();
+$blog = $block->getBlog();
+foreach ($blog as $item) { ?>
+    <div class="container-recent-blog" style="display: flex; margin-top: 10px;">
+        <img id="img-blog" width="70px" height="70px" src="<?php echo($block->handleImage($item->getData('image'))) ?>"/>
+        <div class="container-inform-blog">
+            <a href="<?php echo $url ?>forum/index/view/<?php echo($item->getData('post_id')) ?>"><?php echo($item->getData('title')) ?></a>
+            <div style="margin-top: 10px; font-size: 12px"><a><?php echo($item->getData('firstname').' ') ?><?php echo($item->getData('lastname')) ?></a></div>
+            <div style="font-size: 12px"><?php echo($block->handleDate2($item->getData('created_at'))) ?></div>
+        </div>
+    </div>
+
+<?php } ?>
+<style>
+    #img-blog{
+        padding: 2px;
+        border: solid;
+        border-width: 1px;
+        border-color: lightgrey;
+
+    }
+    body{
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .container-recent-blog{
+        width: 100%;
+        border-bottom: solid;
+        border-width: 1px;
+        border-color: lightgrey;
+    }
+    .container-inform-blog{
+        padding-left: 5px;
+    }
+</style>

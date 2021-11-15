@@ -19,6 +19,8 @@ class BoxPosition implements ArrayInterface
     }
 
     /**
+     * Option for notification box position
+     *
      * @return array
      */
     public function toOptionArray()

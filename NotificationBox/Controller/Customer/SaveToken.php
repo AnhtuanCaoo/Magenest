@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\Customer;
+
 use Magento\Framework\App\Action\Action;
 use Magenest\NotificationBox\Helper\Helper;
 use Magento\Framework\App\Action\Context;
@@ -11,7 +12,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\AlreadyExistsException;
 use \Magento\Store\Model\StoreManagerInterface;
 use \Magento\Framework\Stdlib\DateTime\TimezoneInterface as DateTime;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 use \Magento\Checkout\Model\Session;
 
 class SaveToken extends Action
@@ -26,7 +27,7 @@ class SaveToken extends Action
     protected $customerTokenResource;
 
     /** @var JsonFactory  */
-    protected  $resultJsonFactory;
+    protected $resultJsonFactory;
 
     /** @var  */
     protected $customerTokenCollection;
@@ -44,6 +45,8 @@ class SaveToken extends Action
     protected $checkoutSession;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param Helper $helper
      * @param CustomerTokenFactory $customerTokenFactory
@@ -52,7 +55,7 @@ class SaveToken extends Action
      * @param CollectionFactory $customerTokenCollection
      * @param StoreManagerInterface $storeManage
      * @param DateTime $dateTime
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      * @param Session $checkoutSession
      */
     public function __construct(
@@ -64,10 +67,9 @@ class SaveToken extends Action
         CollectionFactory $customerTokenCollection,
         StoreManagerInterface $storeManage,
         DateTime $dateTime,
-        LoggerInterface $logger,
+        Logger $logger,
         Session $checkoutSession
-    )
-    {
+    ) {
         $this->checkoutSession                  = $checkoutSession;
         $this->logger                   = $logger;
         $this->dateTime                 = $dateTime;
@@ -80,53 +82,51 @@ class SaveToken extends Action
         parent::__construct($context);
     }
 
-    /** save customer Token */
+    /**
+     * Save customer Token
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
         $params = $this->getRequest()->getParams();
         $token =  isset($params['token'])?$params['token']:null;
         $this->checkoutSession->setTokenData($token);
-        if($token){
+        if ($token) {
             //save token;
             try {
                 $customerId = $this->helper->getCustomerId();
                 $customerName = $this->helper->getCustomerName();
                 $currentToken = $this->customerTokenFactory->create();
                 //customer is login
-                if(!isset($customerId)){
+                if (!isset($customerId)) {
                     $customerId = null;
                     $tokenExist = $this->customerTokenCollection->create()
-                        ->addFieldToFilter('customer_id',array('null' => true))
-                        ->addFieldToFilter('guest_id',$params['id'])
+                        ->addFieldToFilter('customer_id', ['null' => true])
+                        ->addFieldToFilter('guest_id', $params['id'])
                         ->addFieldToFilter('store_id', $this->storeManage->getStore()->getId());
-                }
-                else{
+                } else {
                     $tokenExist = $this->customerTokenCollection->create()
-                        ->addFieldToFilter('customer_id',$customerId)
-                        ->addFieldToFilter('guest_id',$params['id'])
-                        ->addFieldToFilter('store_id', $this->storeManage->getStore()->getId());;
+                        ->addFieldToFilter('customer_id', $customerId)
+                        ->addFieldToFilter('guest_id', $params['id'])
+                        ->addFieldToFilter('store_id', $this->storeManage->getStore()->getId());
                 }
 
                 //if the customer has ever registered
-                if(count($tokenExist) ){
-                    $this->customerTokenResource->load($currentToken,$tokenExist->getFirstItem()->getId());
-                    if(!$currentToken->getIsActive()){
+                if (count($tokenExist)) {
+                    $this->customerTokenResource->load($currentToken, $tokenExist->getFirstItem()->getId());
+                    if (!$currentToken->getIsActive()) {
                         //make sure only current web visitors receive the notification
-                        $this->setActiveToken($customerId,$params['id']);
+                        $this->setActiveToken($customerId, $params['id']);
                         $currentToken->setIsActive(CustomerTokenModel::IS_ACTIVE);
                         $this->customerTokenResource->save($currentToken);
                     }
                     //if the token is refreshed
-                    if($params['token'] !== $tokenExist->getFirstItem()->getToken()){
-                        $this->customerTokenResource->load($currentToken,$tokenExist->getFirstItem()->getId());
-                        $currentToken->setData('token',$params['token']);
+                    if ($params['token'] !== $tokenExist->getFirstItem()->getToken()) {
+                        $this->customerTokenResource->load($currentToken, $tokenExist->getFirstItem()->getId());
+                        $currentToken->setData('token', $params['token']);
                         $this->customerTokenResource->save($currentToken);
                     }
-                    //set active for this session
-                }
-                //if token not exits, save new token
-                else{
+                } else {
                     $data['guest_id'] = $params['id'];
                     $now = $this->dateTime->date()->format('Y-m-d');
                     $data['created_at'] = $now;
@@ -134,22 +134,20 @@ class SaveToken extends Action
                     $data['store_id'] = $this->storeManage->getStore()->getId();
                     $data['is_active'] = CustomerTokenModel::IS_ACTIVE;
 
-                    if(isset($customerId)) {
+                    if (isset($customerId)) {
                         $data['customer_id'] = $customerId;
                     }
 
-                    if(isset($customerName) && $customerName != " ") {
+                    if (isset($customerName) && $customerName != " ") {
                         $data['customer_name'] = $customerName;
-                    }
-                    else{
+                    } else {
                         $data['customer_name'] = 'Guest';
                     }
-                    $this->setActiveToken($customerId,$params['id']);
+                    $this->setActiveToken($customerId, $params['id']);
                     $currentToken->addData($data);
                     $this->customerTokenResource->save($currentToken);
                 }
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                     return $result->setData("false");
             }
         }
@@ -157,17 +155,22 @@ class SaveToken extends Action
     }
 
     /**
-     * If there are multiple accounts signed in on the same device, only the last account is allowed to receive notifications
-     * @param $customerId
-     * @param $id
+     * Set active token
+     *
+     * If there are multiple accounts signed in on the same device,
+     * only the last account is allowed to receive notifications
+     *
+     * @param int $customerId
+     * @param int $id
      */
-    public function setActiveToken($customerId,$id){
-        $tokenActive = $this->customerTokenCollection->create()->addFieldToFilter('guest_id',$id);
-        foreach ($tokenActive->getItems() as $item){
-            if($item->getCustomerId() == $customerId){
+    public function setActiveToken($customerId, $id)
+    {
+        $tokenActive = $this->customerTokenCollection->create()->addFieldToFilter('guest_id', $id);
+        foreach ($tokenActive->getItems() as $item) {
+            if ($item->getCustomerId() == $customerId) {
                 $item->setIsActive(CustomerTokenModel::IS_ACTIVE);
-            }else{
-            $item->setIsActive(CustomerTokenModel::IS_NOT_ACTIVE);
+            } else {
+                $item->setIsActive(CustomerTokenModel::IS_NOT_ACTIVE);
             }
             try {
                 $this->customerTokenResource->save($item);

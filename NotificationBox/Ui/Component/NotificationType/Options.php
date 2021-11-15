@@ -1,6 +1,7 @@
 <?php
 
 namespace Magenest\NotificationBox\Ui\Component\NotificationType;
+
 use Magenest\NotificationBox\Model\ResourceModel\NotificationType\Collection;
 
 class Options implements \Magento\Framework\Option\ArrayInterface
@@ -17,6 +18,8 @@ class Options implements \Magento\Framework\Option\ArrayInterface
     }
 
     /**
+     * Option for notification type
+     *
      * @return array
      */
     public function toOptionArray()
@@ -25,8 +28,8 @@ class Options implements \Magento\Framework\Option\ArrayInterface
             'label' => "-- select --", 'value' => ""
         ];
         $this->notificationCollection->getData();
-        foreach ($this->notificationCollection->getData() as $item){
-            if(isset($item['default_type']) && $item['default_type']!== 'null'){
+        foreach ($this->notificationCollection->getData() as $item) {
+            if (isset($item['default_type']) && $item['default_type']!== 'null') {
                 $item['entity_id'] = $item['default_type'];
             }
             $allNotificationType[] = ['label'=> $item['name'], 'value' => $item['entity_id']];

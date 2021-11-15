@@ -34,7 +34,7 @@ class Facebook extends Template
         Context $context,
         array $data = []
     ) {
-    
+
         $this->_clientFacebook = $clientFacebook;
         $this->_customerSession = $customerSession;
         parent::__construct($context, $data);
@@ -52,7 +52,7 @@ class Facebook extends Template
      */
     public function getButtonUrl()
     {
-        return $this->_clientFacebook->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'facebook']);
     }
     /**
      * @return Bool

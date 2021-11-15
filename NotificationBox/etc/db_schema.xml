@@ -12,6 +12,8 @@
         <column xsi:type="varchar" name="condition" nullable="true" comment="condition"/>
         <column xsi:type="text" name="description" nullable="true" comment="notification type"/>
         <column xsi:type="text" name="redirect_url" nullable="true" comment="redirect url"/>
+        <column xsi:type="varchar" name="order_id" nullable="true" comment="order id"/>
+        <column xsi:type="text" name="order_status" nullable="true" comment="order status"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>

@@ -7,7 +7,7 @@
         "zaloplatform/zalo-php-sdk": "*"
     },
     "type": "magento2-module",
-    "version": "2.4.0",
+    "version": "2.4.2",
     "license": [
         "OSL-3.0",
         "proprietary"

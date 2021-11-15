@@ -10,7 +10,7 @@ use Magenest\NotificationBox\Model\NotificationType;
 
 /**
  * Class Image
- * @package Magenest\NotificationBox\Ui\Component\Listing\Columns
+ * Magenest\NotificationBox\Ui\Component\Listing\Columns
  */
 class Image extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -52,6 +52,8 @@ class Image extends \Magento\Ui\Component\Listing\Columns\Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      */
@@ -60,24 +62,23 @@ class Image extends \Magento\Ui\Component\Listing\Columns\Column
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getData('name');
             foreach ($dataSource['data']['items'] as & $item) {
-                if(isset($item['icon'])){
-                        try{
-                            $item['icon'] = $this->serialize->unserialize($item['icon']);
-                        }
-                        catch (\Exception $e){
-                            $item['icon'] = '';
-                        }
+                if (isset($item['icon'])) {
+                    try {
+                        $item['icon'] = $this->serialize->unserialize($item['icon']);
+                    } catch (\Exception $e) {
+                        $item['icon'] = '';
+                    }
                         $item[$fieldName . '_src'] = isset($item['icon'][0]['url'])?$item['icon'][0]['url']:'';
                         $item[$fieldName . '_orig_src'] = isset($item['icon'][0]['url'])?$item['icon'][0]['url']:'';
                         $item[$fieldName . '_link'] = $this->urlBuilder->getUrl(
-                            'notibox/notificationtype/newAction',['entity_id'=>$item['entity_id']]
+                            'notibox/notificationtype/newAction',
+                            ['entity_id'=>$item['entity_id']]
                         );
                 }
-                if(isset($item['is_category'])){
-                    if($item['is_category'] == NotificationType::IS_CATEGORY){
+                if (isset($item['is_category'])) {
+                    if ($item['is_category'] == NotificationType::IS_CATEGORY) {
                         $item['is_category'] = __('Yes');
-                    }
-                    else{
+                    } else {
                         $item['is_category'] = __('No');
                     }
                 }

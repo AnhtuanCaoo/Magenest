@@ -9,8 +9,11 @@ class NotificationType extends AbstractModel
 
     const IS_CATEGORY = 1;
     const IS_NOT_CATEGORY = 0;
+    /**
+     * Init model
+     */
     protected function _construct()
     {
-        $this->_init('Magenest\NotificationBox\Model\ResourceModel\NotificationType');
+        $this->_init(\Magenest\NotificationBox\Model\ResourceModel\NotificationType::class);
     }
 }

@@ -1,0 +1,51 @@
+<?php
+$coupon = $block->getCoupon();
+if(!empty($coupon)){ ?>
+    <?php
+    foreach ($coupon as $value) {
+        $images = $value->getData('images'); ?>
+        <div id="coupon_magenest">
+            <div id="container_coupon">
+                <div style="width: 105px; height: 105px">
+                    <img src="<?php
+                    if(!empty($images)){
+                        echo $images[0]['url'];
+                    }
+                    ?>" alt="coupon" width="100px" height="100px"/>
+                </div>
+                <div id="information_coupon" >
+                    <strong><?php echo $value->getData('code') ?></strong>
+                    <div>Name: <?php echo $value->getData('name') ?></div>
+                    <div><?php echo $value->getData('description') ?></div>
+                    <div>Usage limit: <?php echo $value->getData('usage_limit') ?></div>
+                    <div>Exp: <?php echo $value->getData('to_date') ?></div>
+                </div>
+
+            </div>
+        </div>
+    <?php } ?>
+<?php } ?>
+
+
+<style>
+    #coupon_magenest{
+        border: 1px solid black;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 10px;
+        background-color: white;
+        width: 500px;
+        height: 100px;
+        display: block;
+        float: left;
+        margin: 10px;
+
+    }
+    #container_coupon{
+        display: flex;
+    }
+    #information_coupon{
+        width: 300px;
+        padding-left: 10px;
+    }
+</style>

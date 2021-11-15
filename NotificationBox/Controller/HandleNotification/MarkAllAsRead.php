@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Controller\HandleNotification;
+
 use Magenest\NotificationBox\Model\Notification;
 use Magento\Framework\App\Action\Action;
 use Magenest\NotificationBox\Helper\Helper;
@@ -16,7 +17,7 @@ class MarkAllAsRead extends Action
     protected $helper;
 
     /** @var JsonFactory  */
-    protected  $resultJsonFactory;
+    protected $resultJsonFactory;
 
     /** @var CollectionFactory  */
     protected $collectionFactory;
@@ -42,8 +43,7 @@ class MarkAllAsRead extends Action
         CollectionFactory $collectionFactory,
         CustomerNotification $customerNotification,
         CustomerNotificationFactory  $customerNotificationFactory
-    )
-    {
+    ) {
         $this->customerNotificationFactory  = $customerNotificationFactory;
         $this->customerNotification         = $customerNotification;
         $this->collectionFactory            = $collectionFactory;
@@ -52,22 +52,23 @@ class MarkAllAsRead extends Action
         parent::__construct($context);
     }
 
-    /** save customer Token */
+    /**
+     * Save customer Token
+     */
     public function execute()
     {
         $customerId = $this->helper->getCustomerId();
         $result = $this->resultJsonFactory->create();
-        if($customerId){
+        if ($customerId) {
             try {
                 $allCustomer = $this->collectionFactory->create();
-                $allCustomer->addFieldToFilter('customer_id',$customerId);
-                $allCustomer->addFieldToFilter('status',CustomerNotificationModel::STATUS_READ);
+                $allCustomer->addFieldToFilter('customer_id', $customerId);
+                $allCustomer->addFieldToFilter('status', CustomerNotificationModel::STATUS_READ);
                 foreach ($allCustomer as $item) {
-                    $item->setData('status',CustomerNotificationModel::STATUS_READ);
+                    $item->setData('status', CustomerNotificationModel::STATUS_READ);
                     $this->customerNotification->save($item);
                 }
-            }
-            catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 return $result->setData("fail");
             }
         }

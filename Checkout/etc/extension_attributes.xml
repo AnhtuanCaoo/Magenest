@@ -3,4 +3,5 @@
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
         <attribute code="vn_region" type="string" />
     </extension_attributes>
+
 </config>

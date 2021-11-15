@@ -56,7 +56,7 @@ class Zalo extends Template
      */
     public function getButtonUrl()
     {
-        return $this->client->createAuthUrl();
+        return $this->_urlBuilder->getUrl("sociallogin/index/socialUrl",['social' => 'zalo']);
     }
 
     /**

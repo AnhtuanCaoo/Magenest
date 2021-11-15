@@ -15,6 +15,8 @@ class Unsubscribe extends \Magento\Backend\App\Action
     protected $customerToken;
 
     /**
+     * Construct
+     *
      * @param Action\Context $context
      * @param CustomerTokenFactory $customerTokenFactory
      * @param CustomerToken $customerToken
@@ -23,30 +25,34 @@ class Unsubscribe extends \Magento\Backend\App\Action
         Action\Context $context,
         CustomerTokenFactory $customerTokenFactory,
         CustomerToken $customerToken
-    )
-    {
+    ) {
         $this->customerToken = $customerToken;
         $this->customerTokenFactory = $customerTokenFactory;
         parent::__construct($context);
     }
-
+    /**
+     * Unsubscribe register
+     */
     public function execute()
     {
         $id = $this->getRequest()->getParam('entity_id');
         if ($id) {
             try {
                 $customerTokenModel = $this->customerTokenFactory->create();
-                $this->customerToken->load($customerTokenModel,$id);
-                $customerTokenModel->setData('status', \Magenest\NotificationBox\Model\CustomerToken::STATUS_UNSUBSCRIBED);
+                $this->customerToken->load($customerTokenModel, $id);
+                $customerTokenModel
+                    ->setData('status', \Magenest\NotificationBox\Model\CustomerToken::STATUS_UNSUBSCRIBED);
                 $this->customerToken->save($customerTokenModel);
-                $this->messageManager->addSuccessMessage(__("The register has been unsubscribe."));
+                $this->messageManager->addSuccessMessage(__("The register has been unsubscribed."));
             } catch (\Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __("An error occurred when unsubscribing the registry"));
             }
         }
         return $this->_redirect('notibox/report/index');
     }
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::report');

@@ -51,7 +51,7 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
      *
      * @param Notification $notification
      * @param NotificationResource $notificationResource
-     * @param CollectNotificationCollectionction
+     * @param NotificationCollection $notificationCollection
      * @param CollectionFactory $collectionFactory
      * @param NotificationTypeResource $photoResource
      * @param NotificationTypeFactory $photoFactory
@@ -67,7 +67,7 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
         NotificationTypeFactory $photoFactory,
         Filter $filter,
         Context $context
-    ){
+    ) {
         $this->notificationModel = $notification;
         $this->notificationResource = $notificationResource;
         $this->notificationCollection = $notificationCollection;
@@ -106,22 +106,27 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
 
     /**
      * Check if there is notices of this type
-     * @param $notificationTypeModel
+     *
+     * @param string $notificationTypeModel
      * @return int|void
      */
-    public function checkAssign($notificationTypeModel){
+    public function checkAssign($notificationTypeModel)
+    {
         $notificationType = $notificationTypeModel->getDefaultType();
-        if( $notificationType == Notification::ORDER_STATUS_UPDATE ||
+        if ($notificationType == Notification::ORDER_STATUS_UPDATE ||
             $notificationType == Notification::ABANDONED_CART_REMINDS ||
-            $notificationType == Notification::REVIEW_REMINDERS)
-        {
-            $notification = $this->notificationCollection->create()->addFieldToFilter('notification_type',$notificationTypeModel->getDefaultType());
-        }else{
-            $notification = $this->notificationCollection->create()->addFieldToFilter('notification_type',$notificationTypeModel->getEntityId());
+            $notificationType == Notification::REVIEW_REMINDERS) {
+            $notification = $this->notificationCollection->create()
+                ->addFieldToFilter('notification_type', $notificationTypeModel->getDefaultType());
+        } else {
+            $notification = $this->notificationCollection->create()
+                ->addFieldToFilter('notification_type', $notificationTypeModel->getEntityId());
         }
         return count($notification);
     }
-
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification_type');

@@ -5,6 +5,13 @@ use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 class MassDelete extends AbstractMassAction
 {
+    /**
+     * Delete notification
+     *
+     * @param AbstractCollection $collection
+     * @return \Magento\Framework\Controller\Result\Redirect
+     * @throws \Exception
+     */
     protected function massAction(AbstractCollection $collection)
     {
         $count = 0;

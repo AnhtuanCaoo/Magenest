@@ -9,9 +9,10 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Customer\Model\ResourceModel\Group as ResourceModelGroup;
 use Magento\Customer\Model\GroupFactory;
 use Magenest\NotificationBox\Helper\Helper;
+
 /**
  * Class CustomerGroup
- * @package Magenest\NotificationBox\Ui\Component\Listing\Columns
+ * Magenest\NotificationBox\Ui\Component\Listing\Columns
  */
 class CustomerGroup extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -67,6 +68,8 @@ class CustomerGroup extends \Magento\Ui\Component\Listing\Columns\Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      */
@@ -74,30 +77,29 @@ class CustomerGroup extends \Magento\Ui\Component\Listing\Columns\Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
-                if(isset($item['is_active'])){
-                    if($item['is_active'] == \Magenest\NotificationBox\Model\Notification::ACTIVE)
-                    {
-                        $item['is_active'] = html_entity_decode('<p style="color: green;text-align: center; border:2px solid #2A6002">ACTIVE</p>');
-                    }
-                    else
-                    {
-                        $item['is_active'] = html_entity_decode('<p style="color: red;text-align: center; border: 2px solid red">INACTIVE</p>');
+                if (isset($item['is_active'])) {
+                    if ($item['is_active'] == \Magenest\NotificationBox\Model\Notification::ACTIVE) {
+                        $item['is_active'] = '<p style="color: green;
+                                                 text-align: center;
+                                                 border:2px solid #2A6002">ACTIVE</p>';
+                    } else {
+                        $item['is_active'] = '<p style="color: red;
+                                                 text-align: center;
+                                                 border: 2px solid red">INACTIVE</p>';
                     }
                 }
-                if(isset($item['customer_group'])){
+                if (isset($item['customer_group'])) {
                     $customerColumns = '';
                     $listCustomer = $this->serialize->unserialize($item['customer_group']);
-                    if(count($listCustomer) == count($this->helper->getCustomerGroups())){
+                    if (count($listCustomer) == count($this->helper->getCustomerGroups())) {
                         $item['customer_group'] = 'All Customer Group';
-                    }
-                    else{
-                        foreach ($listCustomer as $customerId)
-                        {
+                    } else {
+                        foreach ($listCustomer as $customerId) {
                             $customer = $this->group->create();
-                            $this->resourceModelGroup->load($customer,$customerId,'customer_group_id');
+                            $this->resourceModelGroup->load($customer, $customerId, 'customer_group_id');
                             $customerColumns  = $customerColumns.$customer->getCustomerGroupCode().'<br>';
                         }
-                        $item['customer_group'] = html_entity_decode($customerColumns);
+                        $item['customer_group'] = $customerColumns;
                     }
                 }
             }

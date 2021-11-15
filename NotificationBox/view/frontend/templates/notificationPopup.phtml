@@ -7,8 +7,10 @@
         <div class="notification-popup">
             <p class="mgn-message-allow-subscriber"></p>
             <div class="answer-wrapper">
-                <p class="defer"><?=__('Remind me later')?></p>
-                <button id="mgn-allow-receive-notice" class="action tocart primary"><?=__('Allow')?></button>
+                <p class="defer"><?= $block->escapeHtml(__('Remind me later'))?></p>
+                <button id="mgn-allow-receive-notice"
+                        class="action tocart primary"><?= $block->escapeHtml(__('Allow'))?>
+                </button>
             </div>
         </div>
     </div>
@@ -22,7 +24,7 @@
             //hide popup
             $(".noti-popup").hide();
             //get time to resend popup
-            var timeResendPopup = <?=$block->getTimeResendPopUp()?> * 1000;
+            var timeResendPopup = <?= $block->escapeHtml($block->getTimeResendPopUp())?> * 1000;
             //get current time
             var time = new Date();
             var currentTime = time.getTime();
@@ -54,7 +56,7 @@
                         console.log('We weren\'t granted permission.');
                     } else {
                         const firebaseConfig = {
-                            messagingSenderId: "<?=$block->getSenderId()?>",
+                            messagingSenderId: "<?= $block->escapeHtml($block->getSenderId())?>",
                         };
                         firebase.initializeApp(firebaseConfig);
                         const messaging = firebase.messaging();

@@ -10,7 +10,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 
 class GetNotification implements GetNotificationInterface
 {
@@ -31,7 +31,7 @@ class GetNotification implements GetNotificationInterface
     /** @var UrlInterface */
     protected $urlInterface;
 
-    /** @var LoggerInterface */
+    /** @var Logger */
     protected $logger;
 
     /** @var CustomerRepositoryInterface */
@@ -54,7 +54,7 @@ class GetNotification implements GetNotificationInterface
      * @param CollectionFactory $collectionFactory
      * @param TimezoneInterface $timezoneInterface
      * @param UrlInterface $urlInterface
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      * @param CustomerRepositoryInterface $customerRepositoryInterface
      * @param StoreManagerInterface $storeManager
      * @param \Magento\Framework\App\ResourceConnection $resource
@@ -64,7 +64,7 @@ class GetNotification implements GetNotificationInterface
         CollectionFactory $collectionFactory,
         TimezoneInterface $timezoneInterface,
         UrlInterface $urlInterface,
-        LoggerInterface $logger,
+        Logger $logger,
         CustomerRepositoryInterface $customerRepositoryInterface,
         StoreManagerInterface $storeManager,
         \Magento\Framework\App\ResourceConnection $resource
@@ -80,9 +80,12 @@ class GetNotification implements GetNotificationInterface
     }
 
     /**
+     * Get customer notification
+     *
      * @param int $customerId
      *
      * @return array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getCustomerNotification($customerId)
     {
@@ -94,10 +97,12 @@ class GetNotification implements GetNotificationInterface
         try {
             $this->customerRepositoryInterface->getById($customerId);
             foreach ($notificationCollection as & $notification) {
-                $notification['name']         = $this->helper->getNotificationNameById($notification['notification_id']);
-                $notification['icon']         = $this->helper->getImageByNotificationType($notification);
-                $notification['created_at']   = $this->timezoneInterface->formatDateTime($notification['created_at'], 2, 2);
-                $notification['redirect_url'] = $this->urlInterface->getUrl('notibox/handleNotification/viewNotification') . '?id=' . $notification['entity_id'];
+                $notification['name']        = $this->helper->getNotificationNameById($notification['notification_id']);
+                $notification['icon']        = $this->helper->getImageByNotificationType($notification);
+                $notification['created_at']  = $this->timezoneInterface
+                    ->formatDateTime($notification['created_at'], 2, 2);
+                $notification['redirect_url'] = $this->urlInterface
+                        ->getUrl('notibox/handleNotification/viewNotification') . '?id=' . $notification['entity_id'];
             }
             $totalNotificationUnread = $notificationCollectionClone->addFieldToFilter('status', 0)->getSize();
             $data[]                  = [
@@ -119,7 +124,9 @@ class GetNotification implements GetNotificationInterface
     }
 
     /**
-     * @param $customerId
+     * Get notification
+     *
+     * @param string $customerId
      *
      * @return Collection
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -131,9 +138,10 @@ class GetNotification implements GetNotificationInterface
         $collection = $this->collectionFactory->create()
             ->addFieldToFilter('customer_id', $customerId)
             ->setOrder('entity_id', 'DESC');
-        $collection->getSelect()->joinInner([
+        $collection->getSelect()->joinInner(
+            [
             'search_result' => $tableName,
-        ],
+            ],
             'main_table.notification_id = search_result.' . 'id',
         );
         $collection->addFieldToFilter(

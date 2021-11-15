@@ -9,8 +9,11 @@ class NotificationQueue extends AbstractModel
     const IS_SENT = 1;
     const IS_NOT_SENT = 0;
 
+    /**
+     * Init model
+     */
     protected function _construct()
     {
-        $this->_init('Magenest\NotificationBox\Model\ResourceModel\NotificationQueue');
+        $this->_init(\Magenest\NotificationBox\Model\ResourceModel\NotificationQueue::class);
     }
 }

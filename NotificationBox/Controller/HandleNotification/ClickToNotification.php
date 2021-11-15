@@ -6,7 +6,7 @@ use Magenest\NotificationBox\Model\NotificationFactory;
 use Magenest\NotificationBox\Model\ResourceModel\Notification;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Psr\Log\LoggerInterface;
+use Magenest\NotificationBox\Logger\Logger;
 
 class ClickToNotification extends Action
 {
@@ -19,31 +19,34 @@ class ClickToNotification extends Action
     /** @var Notification  */
     protected $notificationResource;
 
-    /** @var LoggerInterface  */
-    protected $loggerInterface;
+    /** @var Logger  */
+    protected $logger;
 
     /**
+     * Construct
+     *
      * @param Context $context
      * @param Helper $helper
      * @param NotificationFactory $notificationFactory
      * @param Notification $notificationResource
-     * @param LoggerInterface $loggerInterface
+     * @param Logger $logger
      */
     public function __construct(
         Context $context,
         Helper $helper,
         NotificationFactory $notificationFactory,
         Notification $notificationResource,
-        LoggerInterface $loggerInterface
+        Logger $logger
     ) {
-        $this->loggerInterface              = $loggerInterface;
+        $this->logger              = $logger;
         $this->notificationResource         = $notificationResource;
         $this->notificationFactory          = $notificationFactory;
         $this->helper                       = $helper;
         parent::__construct($context);
     }
-
-    /** update field notification */
+    /**
+     * Update field notification
+     */
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -68,9 +71,11 @@ class ClickToNotification extends Action
         return $resultRedirect;
     }
 
-    /** update field notification
-     * @param $type
-     * @param $notificationId
+    /**
+     * Update field notification
+     *
+     * @param string $type
+     * @param string $notificationId
      */
     private function updateData($type, $notificationId)
     {
@@ -84,7 +89,7 @@ class ClickToNotification extends Action
             }
             $this->notificationResource->save($notificationModel);
         } catch (\Exception $exception) {
-            $this->loggerInterface->error('update fail: ' . $exception->getMessage());
+            $this->logger->error('update fail: ' . $exception->getMessage());
         }
     }
 }

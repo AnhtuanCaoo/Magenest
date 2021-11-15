@@ -14,7 +14,7 @@ use Magento\Framework\Stdlib\DateTime\DateTime as DateTime;
 
 /**
  * Class Save
- * @package Magenest\InstagramShop\Controller\Adminhtml\Hotspot
+ * Magenest\InstagramShop\Controller\Adminhtml\Hotspot
  */
 class Save extends \Magento\Backend\App\Action
 {
@@ -39,6 +39,8 @@ class Save extends \Magento\Backend\App\Action
     protected $dateTime;
 
     /**
+     * Construct
+     *
      * @param Action\Context $context
      * @param NotificationFactory $notificationFactory
      * @param Notification $notification
@@ -53,8 +55,7 @@ class Save extends \Magento\Backend\App\Action
         Json $serialize,
         Helper $helper,
         DateTime $dateTime
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
         $this->notification = $notification;
@@ -78,16 +79,16 @@ class Save extends \Magento\Backend\App\Action
             $resultRedirect = $this->resultRedirectFactory->create();
             $data = $this->getRequest()->getPostValue();
 
-            if(isset($data['total_click'])){
+            if (isset($data['total_click'])) {
                 unset($data['total_click']);
             }
-            if(isset($data['total_sent'])){
+            if (isset($data['total_sent'])) {
                 unset($data['total_sent']);
             }
-            if(isset($data['update_at'])){
+            if (isset($data['update_at'])) {
                 unset($data['update_at']);
             }
-            if(isset($data['created_at'])){
+            if (isset($data['created_at'])) {
                 unset($data['created_at']);
             }
 
@@ -96,15 +97,18 @@ class Save extends \Magento\Backend\App\Action
                         $data['notification_type'] == NotificationModel::ORDER_STATUS_UPDATE) &&
                     $data['send_time'] == 'schedule_time') {
                     $data['send_time'] = 'send_immediately';
-                    $this->messageManager->addWarningMessage('This notification type cannot be scheduled, it will be switched to the sending immediately mode');
+                    $this->messageManager
+                        ->addWarningMessage('This notification type cannot be scheduled,
+                        it will be switched to the sending immediately mode');
                 }
-                if ($data['notification_type'] == NotificationModel::ABANDONED_CART_REMINDS && ($data['send_time'] == 'schedule_time' || $data['send_time'] == 'send_after_the_trigger_condition')) {
+                if ($data['notification_type'] == NotificationModel::ABANDONED_CART_REMINDS && ($data['send_time']
+                        == 'schedule_time' || $data['send_time'] == 'send_after_the_trigger_condition')) {
                     $data['send_time'] = 'send_immediately';
-                    $this->messageManager->addWarningMessage('Cannot schedule or add conditions to this notification type, it will be switched to the sending immediately mode');
+                    $this->messageManager
+                        ->addWarningMessage('Cannot schedule or add conditions to this notification type,
+                        it will be switched to the sending immediately mode');
                 }
             }
-
-
             if (isset($data['schedule_to']) && isset($data['send_time']) && $data['send_time'] == 'schedule_time') {
                 $scheduleTo = date("Y-m-d H:i:s", strtotime($data['schedule_to']));
                 if ($scheduleTo <= $now) {
@@ -147,8 +151,6 @@ class Save extends \Magento\Backend\App\Action
                         $chedule = ['send_after' => $data['send_after'], 'unit' => $data['unit']];
                         $data['schedule'] = $this->serialize->serialize($chedule);
                     }
-
-
                 }
                 unset($data['total_click']);
                 unset($data['impression']);
@@ -163,8 +165,10 @@ class Save extends \Magento\Backend\App\Action
                     && $data['notification_type'] != NotificationModel::REVIEW_REMINDERS
                     && $data['notification_type'] != NotificationModel::ABANDONED_CART_REMINDS
                     && $data['is_active'] == true) {
-                    $this->messageManager->addSuccessMessage(__('The Notification is added to queue. Make sure your cron job is running to send notification'));
-                }else{
+                    $this->messageManager
+                        ->addSuccessMessage(__('The Notification is added to queue.
+                        Make sure your cron job is running to send notification'));
+                } else {
                     $this->messageManager->addSuccessMessage(__('The Notification has been saved.'));
                 }
 
@@ -180,6 +184,9 @@ class Save extends \Magento\Backend\App\Action
 
         return $resultRedirect->setPath('*/*/');
     }
+    /**
+     * ACL
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magenest_NotificationBox::notification');

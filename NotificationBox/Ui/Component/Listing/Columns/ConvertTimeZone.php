@@ -53,7 +53,7 @@ class ConvertTimeZone extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item['created_at'])) {
-                    $createdAt = $this->timezoneInterface->formatDateTime($item['created_at'],2,2);
+                    $createdAt = $this->timezoneInterface->formatDateTime($item['created_at'], 2, 2);
                     $item['created_at'] = $createdAt;
                 }
             }

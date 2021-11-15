@@ -1,5 +1,6 @@
 <?php
 namespace Magenest\NotificationBox\Block\Customer\Tab;
+
 use Magenest\NotificationBox\Model\CustomerNotificationFactory;
 use Magenest\NotificationBox\Model\Notification as NotificationModel;
 use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification;
@@ -18,46 +19,71 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Notification extends Template
 {
-    /** @var Json  */
+    /**
+     * @var Json
+     */
     protected $serialize;
 
-    /** @var CustomerNotificationFactory  */
+    /**
+     * @var CustomerNotificationFactory
+     */
     protected $customerNotificationFactory;
 
-    /** @var CustomerNotification */
+    /**
+     * @var CustomerNotification
+     */
     protected $customerNotificationResource;
 
-    /** @var \Magento\Framework\UrlInterface  */
+    /**
+     * @var \Magento\Framework\UrlInterface
+     */
     protected $urlInterface;
 
-    /** @var CollectionFactory  */
+    /**
+     * @var CollectionFactory
+     */
     protected $collectionFactory;
 
     /** @var Collection  */
     protected $collection;
 
-    /** @var Helper  */
+    /**
+     * @var Helper
+     */
     protected $helper;
 
-    /** @var Session  */
+    /**
+     * @var Session
+     */
     protected $session;
 
-    /** @var NotificationType  */
+    /**
+     * @var NotificationType
+     */
     protected $notificationTypeResource;
 
-    /** @var NotificationTypeFactory  */
+    /**
+     * @var NotificationTypeFactory
+     */
     protected $notificationTypeFactory;
 
-    /** @var null  */
+    /**
+     * @var null
+     */
     protected $notificationCollection = null;
 
-    /** @var StoreManagerInterface  */
+    /**
+     * @var StoreManagerInterface
+     */
     protected $storeManagerInterface;
 
-    /** @var NotificationTypeCollection  */
+    /**
+     * @var NotificationTypeCollection
+     */
     protected $notificationTypeCollection;
 
     /**
+     *
      * @param Collection $collection
      * @param Context $context
      * @param Json $serialize
@@ -84,8 +110,7 @@ class Notification extends Template
         NotificationTypeFactory $notificationTypeFactory,
         StoreManagerInterface $storeManagerInterface,
         NotificationTypeCollection $notificationTypeCollection
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->session                      = $session;
         $this->helper                       = $helper;
@@ -100,6 +125,9 @@ class Notification extends Template
         $this->storeManagerInterface        = $storeManagerInterface;
         $this->notificationTypeCollection   = $notificationTypeCollection;
     }
+    /**
+     * Prepare layout
+     */
     protected function _prepareLayout()
     {
         $type = $this->getFilteredNotificationTypes();
@@ -109,7 +137,7 @@ class Notification extends Template
         $this->getAllCustomerNotification($type);
         if ($this->notificationCollection) {
             $pager = $this->getLayout()->createBlock(
-                'Magento\Theme\Block\Html\Pager',
+                \Magento\Theme\Block\Html\Pager::class,
                 'test'
             )->setAvailableLimit([$pageLimit => $pageLimit])
                 ->setShowPerPage(true)->setCollection(
@@ -120,11 +148,21 @@ class Notification extends Template
         }
         return $this;
     }
-
-    public function getFilteredNotificationTypes(){
+    /**
+     * Get filtered notification types
+     */
+    public function getFilteredNotificationTypes()
+    {
         $params= $this->getRequest()->getParams();
         return (isset($params['type']))?$params['type']:'all';
     }
+
+    /**
+     * Get all customer notification
+     *
+     * @param string $type
+     * @return CustomerNotification\Collection|null
+     */
     public function getAllCustomerNotification($type)
     {
         $pageLimit = $this->helper->getMaximumNotificationInMyNotificationOnMyAccountPage();
@@ -133,22 +171,26 @@ class Notification extends Template
             $pageSize = ($this->getRequest()->getParam('limit')) ? $this->getRequest()->getParam('limit') : $pageLimit;
             $this->notificationCollection = $this->collectionFactory->create()
                 ->addFieldToFilter('customer_id', $customerId);
-            if($type!='all') {
-                $this->notificationCollection->addFieldToFilter('notification_type',$type);
+            if ($type!='all') {
+                $this->notificationCollection->addFieldToFilter('notification_type', $type);
             }
             $this->notificationCollection->setPageSize($pageSize);
             $this->notificationCollection->setCurPage($page);
         }
         return $this->notificationCollection;
     }
-
+    /**
+     * Check is delete notification
+     */
     public function isDeleteNotification()
     {
         return $this->helper->getAllowCustomerDeleteNotification();
     }
 
-    /** check customer is login or not
-     * return customer id
+    /**
+     * Check customer is login or not
+     *
+     * Return customer id
      */
     public function getCustomerId()
     {
@@ -159,7 +201,8 @@ class Notification extends Template
     }
 
     /**
-     * check customer is login or not
+     * Check customer is login or not
+     *
      * If the customer is not logged in, redirect to the login page
      */
     public function redirectIfNotLoggedIn()
@@ -169,60 +212,74 @@ class Notification extends Template
             $this->session->authenticate();
         }
     }
-
+    /**
+     * Get pager html
+     */
     public function getPagerHtml()
     {
         return $this->getChildHtml('pager');
     }
 
     /**
-     * get unread notification color
+     * Get unread notification color
      */
-    public function getUnreadNotification(){
+    public function getUnreadNotification()
+    {
         return $this->helper->getUnreadNotification();
     }
-
-//    get all notification ny notification type with is_category = true
+    //    get all notification ny notification type with is_category = true
+    /**
+     * Get notification by condition
+     *
+     * @param string $condition
+     * @return array|CustomerNotification\Collection
+     */
     public function getNotificationByCondition($condition)
     {
-        if(isset($condition)){
+        if (isset($condition)) {
             $allNotification =  $this->helper->getAllNotificationByCondition($condition)->getData();
-        }
-        else{
+        } else {
             $allNotification = $this->getAllCustomerNotification("all");
-            if($allNotification){
-                $allNotification = $allNotification->setOrder('entity_id','DESC')->getData();
+            if ($allNotification) {
+                $allNotification = $allNotification->setOrder('entity_id', 'DESC')->getData();
             }
         }
 
-        foreach ($allNotification as $key => $notification)
-        {
+        foreach ($allNotification as $key => $notification) {
             $notificationModel = $this->notificationTypeFactory->create();
-            if( $notification['notification_type'] == NotificationModel::ORDER_STATUS_UPDATE ||
+            if ($notification['notification_type'] == NotificationModel::ORDER_STATUS_UPDATE ||
                 $notification['notification_type'] == NotificationModel::ABANDONED_CART_REMINDS ||
                 $notification['notification_type'] == NotificationModel::REVIEW_REMINDERS
             ) {
-                $this->notificationTypeResource->load($notificationModel,$notification['notification_type'],'default_type');
+                $this->notificationTypeResource
+                    ->load($notificationModel, $notification['notification_type'], 'default_type');
                 $allNotification[$key]['notification_type'] = $notificationModel->getName();
-            }
-            else{
-                $this->notificationTypeResource->load($notificationModel,$notification['notification_type'],'entity_id');
+            } else {
+                $this->notificationTypeResource
+                    ->load($notificationModel, $notification['notification_type'], 'entity_id');
                 $allNotification[$key]['notification_type'] = $notificationModel->getName();
             }
 
             $allNotification[$key]['icon'] =  $this->helper->getImageByNotificationType($notification);
 
-            $allNotification[$key]['full_description'] = isset($notification['description'])?$notification['description']:'';
+            $allNotification[$key]['full_description'] =
+                isset($notification['description']) ? $notification['description'] : '';
 
         }
         return $allNotification;
     }
     //get all notification type for filter
-    public function getAllNotificationType(){
+    /**
+     * Get all notification type
+     */
+    public function getAllNotificationType()
+    {
         $allNotificationType = [];
-        $notificationType = $this->notificationTypeCollection->create()->addFieldToFilter('is_category',NotificationTypeModel::IS_CATEGORY);
-        foreach ($notificationType as $item){
-            $allNotificationType[($item->getDefaultType()!='null')? $item->getDefaultType() : $item->getEntityId()] = $item->getName();
+        $notificationType = $this->notificationTypeCollection->create()
+            ->addFieldToFilter('is_category', NotificationTypeModel::IS_CATEGORY);
+        foreach ($notificationType as $item) {
+            $allNotificationType[($item->getDefaultType()!='null')
+                ? $item->getDefaultType() : $item->getEntityId()] = $item->getName();
         }
         return $allNotificationType;
     }

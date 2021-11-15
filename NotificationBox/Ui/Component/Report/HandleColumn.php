@@ -11,7 +11,7 @@ use Magenest\NotificationBox\Model\ResourceModel\CustomerNotification\Collection
 
 /**
  * Class Image
- * @package Magenest\NotificationBox\Ui\Component\Listing\Columns
+ * Magenest\NotificationBox\Ui\Component\Listing\Columns
  */
 class HandleColumn extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -41,8 +41,7 @@ class HandleColumn extends \Magento\Ui\Component\Listing\Columns\Column
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = []
-    )
-    {
+    ) {
         $this->notificationTypeFactory = $notificationTypeFactory;
         $this->notificationTypeResource = $notificationTypeResource;
         $this->collection = $collection;
@@ -50,6 +49,8 @@ class HandleColumn extends \Magento\Ui\Component\Listing\Columns\Column
     }
 
     /**
+     * Prepare data source
+     *
      * @param array $dataSource
      * @return array
      */
@@ -67,14 +68,17 @@ class HandleColumn extends \Magento\Ui\Component\Listing\Columns\Column
                 $dataSource['data']['items'][$key]['ctr'] = $ctr;
                 if (isset($item['notification_type'])) {
                     if ($item['notification_type'] == Notification::ORDER_STATUS_UPDATE) {
-                        $dataSource['data']['items'][$key]['notification_type'] = Notification::ORDER_STATUS_UPDATE_LABEL;
+                        $dataSource['data']['items'][$key]['notification_type']
+                            = Notification::ORDER_STATUS_UPDATE_LABEL;
                     } elseif ($item['notification_type'] == Notification::REVIEW_REMINDERS) {
-                        $dataSource['data']['items'][$key]['notification_type'] = Notification::REVIEW_REMINDERS_LABEL;
+                        $dataSource['data']['items'][$key]['notification_type']
+                            = Notification::REVIEW_REMINDERS_LABEL;
                     } elseif ($item['notification_type'] == Notification::ABANDONED_CART_REMINDS) {
-                        $dataSource['data']['items'][$key]['notification_type'] = Notification::ABANDONED_CART_REMINDS_LABEL;
+                        $dataSource['data']['items'][$key]['notification_type']
+                            = Notification::ABANDONED_CART_REMINDS_LABEL;
                     } else {
                         $notificationModel = $this->notificationTypeFactory->create();
-                        $this->notificationTypeResource->load($notificationModel,$item['notification_type']);
+                        $this->notificationTypeResource->load($notificationModel, $item['notification_type']);
                         $dataSource['data']['items'][$key]['notification_type'] =$notificationModel->getName();
                     }
                 }
